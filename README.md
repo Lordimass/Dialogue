@@ -1,8 +1,7 @@
-# Dialogue
+# Queen's Fall Plugins
 
-Dialogue is a mod for Hytale allowing custom dialogue with entities. It is still heavily work in progress so please bear
-with us!
+This repository stores a collection of mods used by the work in progress Queen's Fall Hytale server.
 
 ## Hytale Plugin Template Credits
 
-Mod template from https://template.azuredoom.com/. Thank you!
+Multi-project workspace template from https://template.azuredoom.com/. Thank you!

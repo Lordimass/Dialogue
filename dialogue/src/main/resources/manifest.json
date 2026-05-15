@@ -1,8 +1,8 @@
 {
-    "Group": "dialogue",
+    "Group": "net.queensfall",
     "Name": "dialogue",
     "Version": "0.0.1",
-    "Description": "Dialogue is a mod for Hytale which lets mapmakers and other creators add custom dialogue with entities.",
+    "Description": "A collection of plugins used by the Queen's Fall Hytale Server",
     "Authors": [
         {
             "Name": "Lordimass"
@@ -11,19 +11,18 @@
             "Name": "BQKitCat"
         }
     ],
-    "Website": "https://github.com/Lordimass/dialogue-for-hytale",
+    "Website": "https://queensfall.net",
     "ServerVersion": "0.5.0-pre.8",
     "Dependencies": {
-        "Hytale:AssetModule": "*",
-        "Hytale:NPC": "*"
+        "Hytale:AssetModule": "*"
     },
     "OptionalDependencies": {
         
     },
     "DisabledByDefault": false,
-    "Main": "com.dialogue.Dialogue",
+    "Main": "net.queensfall.DialogueMod",
     "IncludesAssetPack": true,
     "UpdateChecker": {
-        "CurseForge": ""
+        "CurseForge": "123456"
     }
 }

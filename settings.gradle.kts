@@ -13,4 +13,6 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
-rootProject.name = "Dialogue"
+rootProject.name = "Queen\'s Fall Plugins"
+include("common", "queens_fall", "dialogue")
+
