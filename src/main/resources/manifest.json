@@ -1,0 +1,29 @@
+{
+    "Group": "dialogue",
+    "Name": "dialogue",
+    "Version": "0.0.1",
+    "Description": "Dialogue is a mod for Hytale which lets mapmakers and other creators add custom dialogue with entities.",
+    "Authors": [
+        {
+            "Name": "Lordimass"
+        },
+        {
+            "Name": "BQKitCat"
+        }
+    ],
+    "Website": "https://github.com/Lordimass/dialogue-for-hytale",
+    "ServerVersion": "0.5.0-pre.8",
+    "Dependencies": {
+        "Hytale:AssetModule": "*",
+        "Hytale:NPC": "*"
+    },
+    "OptionalDependencies": {
+        
+    },
+    "DisabledByDefault": false,
+    "Main": "com.dialogue.Dialogue",
+    "IncludesAssetPack": true,
+    "UpdateChecker": {
+        "CurseForge": ""
+    }
+}
