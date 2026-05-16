@@ -6,9 +6,9 @@ import com.hypixel.hytale.codec.builder.BuilderCodec;
 
 import javax.annotation.Nullable;
 
-public class DialogPageData {
-    public static final BuilderCodec<DialogPageData> CODEC =
-            BuilderCodec.builder(DialogPageData.class, DialogPageData::new)
+public class DialoguePageData {
+    public static final BuilderCodec<DialoguePageData> CODEC =
+            BuilderCodec.builder(DialoguePageData.class, DialoguePageData::new)
                     .append(
                             new KeyedCodec<>("DialogNext", Codec.STRING),
                             (entry, s) -> entry.dialogNext = "true".equalsIgnoreCase(s),

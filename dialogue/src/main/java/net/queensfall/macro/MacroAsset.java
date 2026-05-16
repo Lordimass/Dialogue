@@ -11,7 +11,7 @@ import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.codecs.array.ArrayCodec;
 import com.hypixel.hytale.codec.validation.ValidatorCache;
-import net.queensfall.dialog.DialogType;
+import net.queensfall.dialogue.DialogueType;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -36,13 +36,13 @@ public class MacroAsset implements JsonAssetWithMap<String, DefaultAssetMap<Stri
                             },
                             asset -> asset.commands
                     )
-                    .documentation("Commands to execute in order. Use {username} to target the player who executed the dialog.")
+                    .documentation("Commands to execute in order. Use {username} to target the player who executed the dialogue.")
                     .add()
                     .build();
     private static AssetStore<String, MacroAsset, DefaultAssetMap<String, MacroAsset>> ASSET_STORE;
     public static final ValidatorCache<String> VALIDATOR_CACHE = new ValidatorCache(new AssetKeyValidator(MacroAsset::getAssetStore));
     public AssetExtraInfo.Data extraData;
-    public DialogType type;
+    public DialogueType type;
     public String id;
     public String[] commands;
     public String next;
@@ -71,7 +71,7 @@ public class MacroAsset implements JsonAssetWithMap<String, DefaultAssetMap<Stri
         return this.id;
     }
 
-    public DialogType getType() {
+    public DialogueType getType() {
         return this.type;
     }
 

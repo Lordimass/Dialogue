@@ -1,4 +1,4 @@
-package net.queensfall.dialog.action;
+package net.queensfall.dialogue.action;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
@@ -9,17 +9,17 @@ import com.hypixel.hytale.server.npc.asset.builder.BuilderSupport;
 import com.hypixel.hytale.server.npc.corecomponents.ActionBase;
 import com.hypixel.hytale.server.npc.role.Role;
 import com.hypixel.hytale.server.npc.sensorinfo.InfoProvider;
-import net.queensfall.dialog.action.builder.BuilderActionBeginDialog;
-import net.queensfall.player.ui.page.DialogPage;
+import net.queensfall.dialogue.action.builder.BuilderActionBeginDialogue;
+import net.queensfall.player.ui.page.DialoguePage;
 
 import javax.annotation.Nonnull;
 
-public class ActionBeginDialog extends ActionBase {
-    protected final String dialogId;
+public class ActionBeginDialogue extends ActionBase {
+    protected final String dialogueId;
 
-    public ActionBeginDialog(@Nonnull BuilderActionBeginDialog builder, @Nonnull BuilderSupport support) {
+    public ActionBeginDialogue(@Nonnull BuilderActionBeginDialogue builder, @Nonnull BuilderSupport support) {
         super(builder);
-        this.dialogId = builder.getDialogId(support);
+        this.dialogueId = builder.getDialogId(support);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class ActionBeginDialog extends ActionBase {
             }
 
             playerComponent.getPageManager().openCustomPage(ref, store,
-                    new DialogPage(ref, store, playerRefComponent, this.dialogId));
+                    new DialoguePage(ref, store, playerRefComponent, this.dialogueId));
 
             super.execute(ref, role, sensorInfo, dt, store);
             return true;

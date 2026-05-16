@@ -1,28 +1,28 @@
-dialog.IntroDialog01.name = [{lang}] <color is="#2ead58">Hans</color>
-
-dialog.IntroDialog02.name = <color is="#2e94ad">{username}</color>
-dialog.IntroDialog02.content.0 = Uh... Do I know you?
-
-dialog.IntroDialog03.name = <color is="#2ead58">Hans</color>
-dialog.IntroDialog03.content.0 = Did you hit your head on a rock
-dialog.IntroDialog03.content.1 = or do you have a screw loose?!
-dialog.IntroDialog03.content.3 = It's me, your old pal Hans!
-
-dialog.IntroDialog04.name = <color is="#2e94ad">{username}</color>
-dialog.IntroDialog04.content.0 = Where am I?
-dialog.IntroDialog04.content.1 = Who are you again?
-dialog.IntroDialog04.content.2 = Goodbye
-
-dialog.IntroDialog04_C01.name = <color is="#2ead58">Hans</color>
-dialog.IntroDialog04_C01.content.0 = Ah, you're in Lumbridge castle
-dialog.IntroDialog04_C01.content.1 = one of the most peaceful lands
-dialog.IntroDialog04_C01.content.2 = in all of Gielinor!
-
-dialog.IntroDialog04_C02.name = <color is="#2ead58">Hans</color>
-dialog.IntroDialog04_C02.content.0 = Hmm... <i>You really</i> have forgotten, haven't
-dialog.IntroDialog04_C02.content.1 = you? Well, I'm <b>Hans</b>. You and I used to be
-dialog.IntroDialog04_C02.content.2 = childhood friends before you went and
-dialog.IntroDialog04_C02.content.3 = joined the knights. I can't believe <u>you</u> forgot!
-
 interactionHints.talk = Press [{key}] to Talk
 npcRoles.Test_Dialogue.name = Test_Dialogue
+
+IntroDialogue01.name = [{lang}] <color is="#2ead58">Hans</color>
+
+IntroDialogue02.name = <color is="#2e94ad">{username}</color>
+IntroDialogue02.content.0 = Uh... Do I know you?
+
+IntroDialogue03.name = <color is="#2ead58">Hans</color>
+IntroDialogue03.content.0 = Did you hit your head on a rock
+IntroDialogue03.content.1 = or do you have a screw loose?!
+IntroDialogue03.content.3 = It's me, your old pal Hans!
+
+IntroDialogue04.name = <color is="#2e94ad">{username}</color>
+IntroDialogue04.content.0 = Where am I?
+IntroDialogue04.content.1 = Who are you again?
+IntroDialogue04.content.2 = Goodbye
+
+IntroDialogue04_C01.name = <color is="#2ead58">Hans</color>
+IntroDialogue04_C01.content.0 = Ah, you're in Lumbridge castle
+IntroDialogue04_C01.content.1 = one of the most peaceful lands
+IntroDialogue04_C01.content.2 = in all of Gielinor!
+
+IntroDialogue04_C02.name = <color is="#2ead58">Hans</color>
+IntroDialogue04_C02.content.0 = Hmm... <i>You really</i> have forgotten, haven't
+IntroDialogue04_C02.content.1 = you? Well, I'm <b>Hans</b>. You and I used to be
+IntroDialogue04_C02.content.2 = childhood friends before you went and
+IntroDialogue04_C02.content.3 = joined the knights. I can't believe <u>you</u> forgot!

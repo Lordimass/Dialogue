@@ -240,7 +240,7 @@
               },
               {
                 "Type": "BeginDialogue",
-                "Dialog": "IntroDialog01"
+                "Dialogue": "IntroDialogue01"
               },
               {
                 "Type": "State",

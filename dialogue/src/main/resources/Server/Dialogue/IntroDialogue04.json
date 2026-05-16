@@ -1,0 +1,16 @@
+{
+  "Entries": [
+    {
+      "Content": "dialogue.IntroDialogue04.content.0",
+      "Next": "IntroDialogue04_C01"
+    },
+    {
+      "Content": "dialogue.IntroDialogue04.content.1",
+      "Next": "IntroDialogue04_C02"
+    },
+    {
+      "Content": "dialogue.IntroDialogue04.content.2"
+    }
+  ],
+  "Type": "Choice3"
+}

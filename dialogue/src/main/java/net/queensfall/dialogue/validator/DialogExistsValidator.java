@@ -1,7 +1,7 @@
-package net.queensfall.dialog.validator;
+package net.queensfall.dialogue.validator;
 
 import com.hypixel.hytale.server.npc.asset.builder.validators.AssetValidator;
-import net.queensfall.dialog.DialogAsset;
+import net.queensfall.dialogue.DialogueAsset;
 
 import javax.annotation.Nonnull;
 import java.util.EnumSet;
@@ -33,7 +33,7 @@ public class DialogExistsValidator extends AssetValidator {
 
     @Override
     public boolean test(String marker) {
-        return DialogAsset.getAssetMap().getAsset(marker) != null;
+        return DialogueAsset.getAssetMap().getAsset(marker) != null;
     }
 
     @Override
@@ -45,6 +45,6 @@ public class DialogExistsValidator extends AssetValidator {
     @Override
     @Nonnull
     public String getAssetName() {
-        return DialogAsset.class.getSimpleName();
+        return DialogueAsset.class.getSimpleName();
     }
 }

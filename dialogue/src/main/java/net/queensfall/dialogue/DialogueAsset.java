@@ -1,4 +1,4 @@
-package net.queensfall.dialog;
+package net.queensfall.dialogue;
 
 import com.hypixel.hytale.assetstore.AssetExtraInfo;
 import com.hypixel.hytale.assetstore.AssetRegistry;
@@ -15,15 +15,15 @@ import net.queensfall.macro.MacroAsset;
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 
-public class DialogAsset implements JsonAssetWithMap<String, DefaultAssetMap<String, DialogAsset>> {
+public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<String, DialogueAsset>> {
 
-    public static final EnumCodec<DialogType> DIALOG_TYPE_ENUM_CODEC = new EnumCodec<>(DialogType.class);
+    public static final EnumCodec<DialogueType> DIALOG_TYPE_ENUM_CODEC = new EnumCodec<>(DialogueType.class);
 
-    public static final AssetBuilderCodec<String, DialogAsset> CODEC =
+    public static final AssetBuilderCodec<String, DialogueAsset> CODEC =
             AssetBuilderCodec
                     .builder(
-                            DialogAsset.class,
-                            DialogAsset::new,
+                            DialogueAsset.class,
+                            DialogueAsset::new,
                             Codec.STRING,
                             (asset, s) -> asset.id = s,
                             asset -> asset.id,
@@ -37,26 +37,26 @@ public class DialogAsset implements JsonAssetWithMap<String, DefaultAssetMap<Str
                     )
                     .add()
                     .append(
-                            new KeyedCodec<>("Entries", new ArrayCodec<>(DialogEntry.CODEC, DialogEntry[]::new)),
+                            new KeyedCodec<>("Entries", new ArrayCodec<>(DialogueEntry.CODEC, DialogueEntry[]::new)),
                             (asset, entries) -> {
                                 asset.entries = entries;
                             },
                             asset -> asset.entries
                     )
-                    .documentation("Content of the dialog.\n\nThis will eventually be replaced with multiline components.")
+                    .documentation("Content of the dialogue.\n\nThis will eventually be replaced with multiline components.")
                     .add()
                     .append(
                             new KeyedCodec<>("Next", Codec.STRING),
                             (asset, s) -> asset.next = s,
                             asset -> asset.next
                     )
-                    .documentation("The next dialog that should open after continuing.\n\nThis will eventually be replaced with multiline components.")
+                    .documentation("The next dialogue that should open after continuing.\n\nThis will eventually be replaced with multiline components.")
                     .add()
                     .append(new KeyedCodec<>("Typewriter Effect", Codec.BOOLEAN),
                             (obj, val) -> obj.typewriterEffect = val,
                             obj -> obj.typewriterEffect
                     )
-                    .documentation("Should the dialog be written over time like a typewriter?")
+                    .documentation("Should the dialogue be written over time like a typewriter?")
                     .add()
                     .append(
                             new KeyedCodec<>("DialogueMod Macro", MacroAsset.CODEC),
@@ -66,33 +66,33 @@ public class DialogAsset implements JsonAssetWithMap<String, DefaultAssetMap<Str
                     .add()
                     .build();
 
-    private static AssetStore<String, DialogAsset, DefaultAssetMap<String, DialogAsset>> ASSET_STORE;
+    private static AssetStore<String, DialogueAsset, DefaultAssetMap<String, DialogueAsset>> ASSET_STORE;
     public AssetExtraInfo.Data extraData;
-    public DialogType type = DialogType.DIALOG_1;
+    public DialogueType type = DialogueType.DIALOGUE_1;
     public MacroAsset macro;
     public String id;
-    public DialogEntry[] entries;
+    public DialogueEntry[] entries;
     public String next;
 
     public boolean typewriterEffect = false;
 
-    public DialogAsset(String id, DialogEntry[] entries) {
+    public DialogueAsset(String id, DialogueEntry[] entries) {
         this.id = id;
         this.entries = entries;
     }
 
-    protected DialogAsset() {
+    protected DialogueAsset() {
     }
 
-    public static AssetStore<String, DialogAsset, DefaultAssetMap<String, DialogAsset>> getAssetStore() {
+    public static AssetStore<String, DialogueAsset, DefaultAssetMap<String, DialogueAsset>> getAssetStore() {
         if (ASSET_STORE == null) {
-            ASSET_STORE = AssetRegistry.getAssetStore(DialogAsset.class);
+            ASSET_STORE = AssetRegistry.getAssetStore(DialogueAsset.class);
         }
         return ASSET_STORE;
     }
 
-    public static DefaultAssetMap<String, DialogAsset> getAssetMap() {
-        return DialogAsset.getAssetStore().getAssetMap();
+    public static DefaultAssetMap<String, DialogueAsset> getAssetMap() {
+        return DialogueAsset.getAssetStore().getAssetMap();
     }
 
     public boolean isTypewriterEffectEnabled() {
@@ -104,11 +104,11 @@ public class DialogAsset implements JsonAssetWithMap<String, DefaultAssetMap<Str
         return this.id;
     }
 
-    public DialogType getType() {
+    public DialogueType getType() {
         return this.type;
     }
 
-    public DialogEntry[] getEntries() {
+    public DialogueEntry[] getEntries() {
         return this.entries;
     }
 
@@ -122,7 +122,7 @@ public class DialogAsset implements JsonAssetWithMap<String, DefaultAssetMap<Str
 
     @Nonnull
     public String toString() {
-        return "DialogAsset{id='" + this.id + "', entries='" + Arrays.toString(this.entries) + "'}";
+        return "DialogueAsset{id='" + this.id + "', entries='" + Arrays.toString(this.entries) + "'}";
     }
 
 }

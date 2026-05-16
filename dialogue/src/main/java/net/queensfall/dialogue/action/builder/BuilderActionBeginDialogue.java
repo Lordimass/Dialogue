@@ -1,4 +1,4 @@
-package net.queensfall.dialog.action.builder;
+package net.queensfall.dialogue.action.builder;
 
 import com.google.gson.JsonElement;
 import com.hypixel.hytale.server.npc.asset.builder.BuilderDescriptorState;
@@ -7,20 +7,20 @@ import com.hypixel.hytale.server.npc.asset.builder.InstructionType;
 import com.hypixel.hytale.server.npc.asset.builder.holder.AssetHolder;
 import com.hypixel.hytale.server.npc.corecomponents.builders.BuilderActionBase;
 import com.hypixel.hytale.server.npc.instructions.Action;
-import net.queensfall.dialog.action.ActionBeginDialog;
-import net.queensfall.dialog.validator.DialogExistsValidator;
+import net.queensfall.dialogue.action.ActionBeginDialogue;
+import net.queensfall.dialogue.validator.DialogExistsValidator;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 
-public class BuilderActionBeginDialog extends BuilderActionBase {
-    protected final AssetHolder dialogId = new AssetHolder();
+public class BuilderActionBeginDialogue extends BuilderActionBase {
+    protected final AssetHolder dialogueId = new AssetHolder();
 
     @Nullable
     @Override
     public String getShortDescription() {
-        return "Begin the dialog for the current player";
+        return "Begin the dialogue for the current player";
     }
 
     @Nullable
@@ -32,7 +32,7 @@ public class BuilderActionBeginDialog extends BuilderActionBase {
     @Nullable
     @Override
     public Action build(@Nonnull BuilderSupport builderSupport) {
-        return new ActionBeginDialog(this, builderSupport);
+        return new ActionBeginDialogue(this, builderSupport);
     }
 
     @Override
@@ -42,13 +42,13 @@ public class BuilderActionBeginDialog extends BuilderActionBase {
     }
 
     @Nonnull
-    public BuilderActionBeginDialog readConfig(@Nonnull JsonElement data) {
-        this.requireAsset(data, "Dialog", this.dialogId, DialogExistsValidator.required(), BuilderDescriptorState.Stable, "The dialog to begin", null);
+    public BuilderActionBeginDialogue readConfig(@Nonnull JsonElement data) {
+        this.requireAsset(data, "Dialogue", this.dialogueId, DialogExistsValidator.required(), BuilderDescriptorState.Stable, "The dialogue to begin", null);
         this.requireInstructionType(EnumSet.of(InstructionType.Interaction));
         return this;
     }
 
     public String getDialogId(@Nonnull BuilderSupport support) {
-        return this.dialogId.get(support.getExecutionContext());
+        return this.dialogueId.get(support.getExecutionContext());
     }
 }

@@ -1,4 +1,4 @@
-package net.queensfall.dialog.event;
+package net.queensfall.dialogue.event;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
@@ -7,7 +7,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import net.queensfall.DialogueMod;
 import net.queensfall.util.ParameterContext;
 
-public record DialogEventContext(
+public record DialogueEventContext(
         String dialogId,
         PlayerRef player,
         Ref<EntityStore> entRef,

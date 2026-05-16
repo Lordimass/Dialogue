@@ -8,13 +8,12 @@ import com.hypixel.hytale.server.core.modules.interaction.interaction.config.Int
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
-import com.hypixel.hytale.server.core.util.Config;
 import com.hypixel.hytale.server.npc.NPCPlugin;
 import lombok.Getter;
-import net.queensfall.dialog.DialogAsset;
-import net.queensfall.dialog.action.builder.BuilderActionBeginDialog;
-import net.queensfall.dialog.event.DialogEventBus;
-import net.queensfall.dialog.event.DialogInputReceivedEvent;
+import net.queensfall.dialogue.DialogueAsset;
+import net.queensfall.dialogue.action.builder.BuilderActionBeginDialogue;
+import net.queensfall.dialogue.event.DialogueEventBus;
+import net.queensfall.dialogue.event.DialogueInputReceivedEvent;
 import net.queensfall.macro.MacroAsset;
 import net.queensfall.demo.DemoClass;
 import net.queensfall.player.DialoguePlayer;
@@ -37,20 +36,20 @@ public class DialogueMod extends JavaPlugin {
     private static DialogueMod INSTANCE;
     private final Map<String, ParameterProcessor<?>> processors = new ConcurrentHashMap<>();
     @Getter
-    private final Config<DialogueConfig> config;
+    private final com.hypixel.hytale.server.core.util.Config<Config> config;
 
     private final List<ParameterContextContributor> contributors = new ArrayList<>();
 
-    private final DialogEventBus dialogEvents = new DialogEventBus();
+    private final DialogueEventBus dialogEvents = new DialogueEventBus();
 
-    public DialogEventBus dialogEvents() {
+    public DialogueEventBus dialogEvents() {
         return dialogEvents;
     }
 
     public DialogueMod(JavaPluginInit init) {
         super(init);
         INSTANCE = this;
-        config = withConfig(DialogueConfig.CODEC);
+        config = withConfig(Config.CODEC);
     }
 
     public static DialogueMod get() {
@@ -108,8 +107,8 @@ public class DialogueMod extends JavaPlugin {
         });
 
         DialogueMod.get().dialogEvents().register(
-            "IntroDialog01",
-            DialogInputReceivedEvent.class,
+            "IntroDialogue01",
+            DialogueInputReceivedEvent.class,
             event -> {
                 PlayerRef player = event.context().player();
                 System.out.println("[" + player.getUsername() + "] " + event.input());
@@ -122,16 +121,16 @@ public class DialogueMod extends JavaPlugin {
 
         this.getCommandRegistry().registerCommand(new DialogueCommand());
 
-        NPCPlugin.get().registerCoreComponentType("BeginDialogue", BuilderActionBeginDialog::new);
+        NPCPlugin.get().registerCoreComponentType("BeginDialogue", BuilderActionBeginDialogue::new);
 
         registerAssetTypes();
         registerEvents();
     }
 
     public void registerAssetTypes() {
-        HytaleAssetStore.Builder<String, DialogAsset, DefaultAssetMap<String, DialogAsset>> dialogAssetBuilder =
+        HytaleAssetStore.Builder<String, DialogueAsset, DefaultAssetMap<String, DialogueAsset>> dialogAssetBuilder =
             HytaleAssetStore.builder(
-                DialogAsset.class,
+                DialogueAsset.class,
                 new DefaultAssetMap<>()
             );
 
@@ -153,8 +152,8 @@ public class DialogueMod extends JavaPlugin {
         this.getAssetRegistry().register(
             dialogAssetBuilder
                 .setPath("Dialogue")
-                .setCodec(DialogAsset.CODEC)
-                .setKeyFunction(DialogAsset::getId)
+                .setCodec(DialogueAsset.CODEC)
+                .setKeyFunction(DialogueAsset::getId)
                 .loadsAfter(Interaction.class)
                 .build()
         );
@@ -175,7 +174,7 @@ public class DialogueMod extends JavaPlugin {
             playerDisconnectEvent -> {
                 DialoguePlayer player = dialoguePlayerMap.get(playerDisconnectEvent.getPlayerRef());
 
-                Config<DialoguePlayerConfig> cfg = new Config<>(
+                com.hypixel.hytale.server.core.util.Config<DialoguePlayerConfig> cfg = new com.hypixel.hytale.server.core.util.Config<>(
                     new File("config/dialogue/player_data/").toPath(),
                     playerDisconnectEvent.getPlayerRef().getUsername(),
                     DialoguePlayerConfig.CODEC

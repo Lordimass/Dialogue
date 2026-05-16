@@ -18,12 +18,12 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import lombok.Getter;
 import net.queensfall.DialogueMod;
-import net.queensfall.dialog.DialogAsset;
-import net.queensfall.dialog.DialogType;
-import net.queensfall.dialog.event.ChoiceSelectedEvent;
-import net.queensfall.dialog.event.DialogEventContext;
-import net.queensfall.dialog.event.DialogInputReceivedEvent;
-import net.queensfall.dialog.event.NextDialogEvent;
+import net.queensfall.dialogue.DialogueAsset;
+import net.queensfall.dialogue.DialogueType;
+import net.queensfall.dialogue.event.ChoiceSelectedEvent;
+import net.queensfall.dialogue.event.DialogueEventContext;
+import net.queensfall.dialogue.event.DialogueInputReceivedEvent;
+import net.queensfall.dialogue.event.NextDialogueEvent;
 import net.queensfall.macro.MacroAsset;
 import net.queensfall.util.ParameterContext;
 
@@ -33,32 +33,32 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class DialogPage extends InteractiveCustomUIPage<DialogPageData> {
+public class DialoguePage extends InteractiveCustomUIPage<DialoguePageData> {
 
-    private static final AssetStore<String, DialogAsset, DefaultAssetMap<String, DialogAsset>>
-            STORE = AssetRegistry.getAssetStore(DialogAsset.class);
+    private static final AssetStore<String, DialogueAsset, DefaultAssetMap<String, DialogueAsset>>
+            STORE = AssetRegistry.getAssetStore(DialogueAsset.class);
     @Nonnull
     @Getter
     private final Ref<EntityStore> ref;
     @Nonnull
     @Getter
     private final Store<EntityStore> store;
-    public DialogType currentDialogType = DialogType.UNSET;
+    public DialogueType currentDialogueType = DialogueType.UNSET;
     public boolean isProcessing = true;
     public String key;
 
     public String input = "";
 
-    public DialogPage(@Nonnull Ref<EntityStore> ref, @Nonnull Store<EntityStore> store, PlayerRef playerRef, String key) {
-        super(playerRef, CustomPageLifetime.CanDismissOrCloseThroughInteraction, DialogPageData.CODEC);
+    public DialoguePage(@Nonnull Ref<EntityStore> ref, @Nonnull Store<EntityStore> store, PlayerRef playerRef, String key) {
+        super(playerRef, CustomPageLifetime.CanDismissOrCloseThroughInteraction, DialoguePageData.CODEC);
         setKey(key);
 
         this.ref = ref;
         this.store = store;
     }
 
-    private DialogEventContext createEventContext(ParameterContext params) {
-        return new DialogEventContext(
+    private DialogueEventContext createEventContext(ParameterContext params) {
+        return new DialogueEventContext(
                 key,
                 playerRef,
                 ref,
@@ -70,23 +70,23 @@ public class DialogPage extends InteractiveCustomUIPage<DialogPageData> {
 
     @Override
     public void build(@Nonnull Ref<EntityStore> entRef, @Nonnull UICommandBuilder commands, @Nonnull UIEventBuilder eventBuilder, @Nonnull Store<EntityStore> entStore) {
-        DialogAsset asset = getAsset();
+        DialogueAsset asset = getAsset();
 
         if (asset == null) {
             this.close();
             return;
         }
 
-        currentDialogType = asset.getType();
+        currentDialogueType = asset.getType();
 
-        if (currentDialogType.equals(DialogType.UNSET)) {
+        if (currentDialogueType.equals(DialogueType.UNSET)) {
             close();
             return;
         }
 
-        commands.append(currentDialogType.uiPath);
+        commands.append(currentDialogueType.uiPath);
 
-        if(currentDialogType.isDialog() || currentDialogType.isInput())
+        if(currentDialogueType.isDialog() || currentDialogueType.isInput())
             if (asset.getNext() == null)
                 commands.set("#NextButton.Text", "CLOSE");
 
@@ -95,24 +95,24 @@ public class DialogPage extends InteractiveCustomUIPage<DialogPageData> {
         ctx.put(DialogueMod.class, DialogueMod.get());
         DialogueMod.get().populateContext(ctx);
 
-        Message message = Message.translation("dialogue.dialog." + asset.getId() + ".name");
+        Message message = Message.translation("dialogue." + asset.getId() + ".name");
         message = Message.translation(DialogueMod.get().process(message.getAnsiMessage(), ctx));
         commands.set("#NameTitle.TextSpans", message);
 
-        if(currentDialogType.isInput()) {
+        if(currentDialogueType.isInput()) {
             eventBuilder.addEventBinding(CustomUIEventBindingType.ValueChanged, "#Input", EventData.of("@Input", "#ContentGroup #Input.Value"), false);
             eventBuilder.addEventBinding(
                     CustomUIEventBindingType.Activating,
                     "#NextButton",
                     EventData.of("InputNext", "true")
             );
-        } else if (currentDialogType.isDialog()) {
+        } else if (currentDialogueType.isDialog()) {
             eventBuilder.addEventBinding(
                     CustomUIEventBindingType.Activating,
                     "#NextButton",
                     EventData.of("DialogNext", "true")
             );
-        } else if (currentDialogType.isChoice()) {
+        } else if (currentDialogueType.isChoice()) {
             if(asset.entries != null && asset.entries.length > 0) {
                 for (int i = 0; i < asset.entries.length; i++) {
                     eventBuilder.addEventBinding(
@@ -125,9 +125,9 @@ public class DialogPage extends InteractiveCustomUIPage<DialogPageData> {
         }
 
         /*
-            Entry fulfillment is not needed for input dialog.
+            Entry fulfillment is not needed for input dialogue.
          */
-        if(!currentDialogType.isInput())
+        if(!currentDialogueType.isInput())
             if(asset.entries != null && asset.entries.length > 0) {
                 for (int i = 0; i < asset.entries.length; i++) {
                     message = Message.translation(asset.entries[i].content);
@@ -136,17 +136,17 @@ public class DialogPage extends InteractiveCustomUIPage<DialogPageData> {
                 }
             }
 
-        if (currentDialogType.equals(DialogType.UNSET))
+        if (currentDialogueType.equals(DialogueType.UNSET))
             this.close();
 
         isProcessing = false;
     }
 
     @Override
-    public void handleDataEvent(@Nonnull Ref<EntityStore> entRef, @Nonnull Store<EntityStore> entStore, @Nonnull DialogPageData data) {
+    public void handleDataEvent(@Nonnull Ref<EntityStore> entRef, @Nonnull Store<EntityStore> entStore, @Nonnull DialoguePageData data) {
         boolean needsUpdate = false;
 
-        DialogAsset asset = getAsset();
+        DialogueAsset asset = getAsset();
 
         if (asset == null) {
             this.close();
@@ -166,9 +166,9 @@ public class DialogPage extends InteractiveCustomUIPage<DialogPageData> {
                 params.put(DialogueMod.class, DialogueMod.get());
                 DialogueMod.get().populateContext(params);
 
-                DialogEventContext ctx = createEventContext(params);
+                DialogueEventContext ctx = createEventContext(params);
                 DialogueMod.get().dialogEvents()
-                        .dispatch(key, new DialogInputReceivedEvent(ctx, asset, this.input));
+                        .dispatch(key, new DialogueInputReceivedEvent(ctx, asset, this.input));
 
                 this.input = "";
                 needsUpdate = true;
@@ -181,9 +181,9 @@ public class DialogPage extends InteractiveCustomUIPage<DialogPageData> {
                 params.put(DialogueMod.class, DialogueMod.get());
                 DialogueMod.get().populateContext(params);
 
-                DialogEventContext ctx = createEventContext(params);
+                DialogueEventContext ctx = createEventContext(params);
                 DialogueMod.get().dialogEvents()
-                        .dispatch(key, new NextDialogEvent(ctx, asset));
+                        .dispatch(key, new NextDialogueEvent(ctx, asset));
 
                 isProcessing = true;
                 executeMacro(asset.getMacro());
@@ -198,7 +198,7 @@ public class DialogPage extends InteractiveCustomUIPage<DialogPageData> {
                     params.put(DialogueMod.class, DialogueMod.get());
                     DialogueMod.get().populateContext(params);
 
-                    DialogEventContext ctx = createEventContext(params);
+                    DialogueEventContext ctx = createEventContext(params);
                     DialogueMod.get().dialogEvents()
                             .dispatch(key, new ChoiceSelectedEvent(ctx, asset, i,  asset.entries[i]));
 
@@ -215,7 +215,7 @@ public class DialogPage extends InteractiveCustomUIPage<DialogPageData> {
             this.sendUpdate();
     }
 
-    private void handleEntry(int index, DialogAsset asset) {
+    private void handleEntry(int index, DialogueAsset asset) {
         if (asset.entries.length <= index)
             return;
 
@@ -244,7 +244,7 @@ public class DialogPage extends InteractiveCustomUIPage<DialogPageData> {
                 .handleCommands(ConsoleSender.INSTANCE, commands);
     }
 
-    public DialogAsset getAsset() {
+    public DialogueAsset getAsset() {
         if (STORE == null)
             return null;
 

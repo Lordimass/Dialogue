@@ -10,7 +10,7 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import net.queensfall.player.ui.page.DialogPage;
+import net.queensfall.player.ui.page.DialoguePage;
 
 import javax.annotation.Nonnull;
 
@@ -21,8 +21,8 @@ public class BeginCommand extends AbstractPlayerCommand {
 
     public BeginCommand() {
         super("begin", "Command for developer use only!");
-        playerArg = withRequiredArg("player", "Username of the player who should open dialog.", ArgTypes.PLAYER_REF);
-        dialogArg = withRequiredArg("dialog", "The dialog to open.", ArgTypes.STRING);
+        playerArg = withRequiredArg("player", "Username of the player who should open dialogue.", ArgTypes.PLAYER_REF);
+        dialogArg = withRequiredArg("dialogue", "The dialogue to open.", ArgTypes.STRING);
     }
 
     @Override
@@ -41,6 +41,6 @@ public class BeginCommand extends AbstractPlayerCommand {
         }
 
         playerComponent.getPageManager().openCustomPage(ref1, store1,
-                new DialogPage(ref1, store1, playerRef1, label));
+                new DialoguePage(ref1, store1, playerRef1, label));
     }
 }

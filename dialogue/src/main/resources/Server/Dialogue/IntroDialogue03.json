@@ -1,0 +1,15 @@
+{
+  "Entries": [
+    {
+      "Content": "dialogue.IntroDialogue03.content.0"
+    },
+    {
+      "Content": "dialogue.IntroDialogue03.content.1"
+    },
+    {
+      "Content": "dialogue.IntroDialogue03.content.3"
+    }
+  ],
+  "Type": "Dialogue3",
+  "Next": "IntroDialogue04"
+}

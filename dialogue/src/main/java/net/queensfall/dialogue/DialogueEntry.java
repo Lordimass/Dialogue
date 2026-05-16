@@ -1,17 +1,19 @@
-package net.queensfall.dialog;
+package net.queensfall.dialogue;
 
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.validation.Validators;
+import lombok.Getter;
 import net.queensfall.macro.MacroAsset;
 
 import javax.annotation.Nonnull;
 
-public class DialogEntry {
-    public static final BuilderCodec<DialogEntry> CODEC =
+@Getter
+public class DialogueEntry {
+    public static final BuilderCodec<DialogueEntry> CODEC =
             BuilderCodec
-                    .builder(DialogEntry.class, DialogEntry::new)
+                    .builder(DialogueEntry.class, DialogueEntry::new)
                     .append(
                             new KeyedCodec<>("Content", Codec.STRING),
                             (obj, val) -> obj.content = val,
@@ -37,28 +39,16 @@ public class DialogEntry {
     public String next;
     public MacroAsset macro;
 
-    public DialogEntry(String content, String next) {
+    public DialogueEntry(String content, String next) {
         this.content = content;
         this.next = next;
     }
 
-    protected DialogEntry() {
-    }
-
-    public String getContent() {
-        return this.content;
-    }
-
-    public String getNext() {
-        return this.next;
-    }
-
-    public MacroAsset getMacro() {
-        return this.macro;
+    protected DialogueEntry() {
     }
 
     @Nonnull
     public String toString() {
-        return "DialogEntry{next=" + this.next + ", content=" + this.content + "}";
+        return "DialogueEntry{next=" + this.next + ", content=" + this.content + "}";
     }
 }

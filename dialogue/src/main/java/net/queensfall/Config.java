@@ -6,8 +6,8 @@ import com.hypixel.hytale.codec.builder.BuilderCodec;
 import lombok.Getter;
 
 @Getter
-public class DialogueConfig {
-    public static final BuilderCodec<DialogueConfig> CODEC = BuilderCodec.builder(DialogueConfig.class, DialogueConfig::new)
+public class Config {
+    public static final BuilderCodec<Config> CODEC = BuilderCodec.builder(Config.class, Config::new)
             .append(new KeyedCodec<>("DebugMode", Codec.BOOLEAN),
                     (config, val) -> config.debugMode = val,
                     config -> config.debugMode)
