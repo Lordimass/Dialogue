@@ -1,0 +1,15 @@
+{
+  "Entries": [
+    {
+      "Content": "dialogue.dialog.IntroDialog02.content.0"
+    }
+  ],
+  "Type": "Dialog1",
+  "Next": "IntroDialog03",
+  "Dialogue Macro": {
+    "Commands": [
+      "give {username} Tool_Pickaxe_Wood",
+      "give {username} Tool_Pickaxe_Wood"
+    ]
+  }
+}

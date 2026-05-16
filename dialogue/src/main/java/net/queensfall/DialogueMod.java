@@ -11,15 +11,15 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.util.Config;
 import com.hypixel.hytale.server.npc.NPCPlugin;
 import lombok.Getter;
-import net.queensfall.asset.dialog.HyspeechDialogAsset;
-import net.queensfall.asset.dialog.action.builder.BuilderActionBeginDialog;
-import net.queensfall.asset.dialog.event.DialogEventBus;
-import net.queensfall.asset.dialog.event.DialogInputReceivedEvent;
-import net.queensfall.asset.macro.HyspeechMacroAsset;
+import net.queensfall.dialog.DialogAsset;
+import net.queensfall.dialog.action.builder.BuilderActionBeginDialog;
+import net.queensfall.dialog.event.DialogEventBus;
+import net.queensfall.dialog.event.DialogInputReceivedEvent;
+import net.queensfall.macro.MacroAsset;
 import net.queensfall.demo.DemoClass;
-import net.queensfall.player.HyspeechPlayer;
-import net.queensfall.player.HyspeechPlayerConfig;
-import net.queensfall.player.commands.HyspeechCommand;
+import net.queensfall.player.DialoguePlayer;
+import net.queensfall.player.DialoguePlayerConfig;
+import net.queensfall.player.commands.DialogueCommand;
 import net.queensfall.util.ParameterContext;
 import net.queensfall.util.ParameterContextContributor;
 import net.queensfall.util.ParameterProcessor;
@@ -33,11 +33,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class DialogueMod extends JavaPlugin {
 
-    public static final Map<PlayerRef, HyspeechPlayer> hyspeechPlayerMap = new ConcurrentHashMap<>();
+    public static final Map<PlayerRef, DialoguePlayer> dialoguePlayerMap = new ConcurrentHashMap<>();
     private static DialogueMod INSTANCE;
     private final Map<String, ParameterProcessor<?>> processors = new ConcurrentHashMap<>();
     @Getter
-    private final Config<HyspeechConfig> config;
+    private final Config<DialogueConfig> config;
 
     private final List<ParameterContextContributor> contributors = new ArrayList<>();
 
@@ -50,7 +50,7 @@ public class DialogueMod extends JavaPlugin {
     public DialogueMod(JavaPluginInit init) {
         super(init);
         INSTANCE = this;
-        config = withConfig(HyspeechConfig.CODEC);
+        config = withConfig(DialogueConfig.CODEC);
     }
 
     public static DialogueMod get() {
@@ -120,41 +120,41 @@ public class DialogueMod extends JavaPlugin {
          * End of demo-code.
          */
 
-        this.getCommandRegistry().registerCommand(new HyspeechCommand());
+        this.getCommandRegistry().registerCommand(new DialogueCommand());
 
-        NPCPlugin.get().registerCoreComponentType("HyspeechBeginDialog", BuilderActionBeginDialog::new);
+        NPCPlugin.get().registerCoreComponentType("BeginDialogue", BuilderActionBeginDialog::new);
 
         registerAssetTypes();
         registerEvents();
     }
 
     public void registerAssetTypes() {
-        HytaleAssetStore.Builder<String, HyspeechDialogAsset, DefaultAssetMap<String, HyspeechDialogAsset>> dialogAssetBuilder =
+        HytaleAssetStore.Builder<String, DialogAsset, DefaultAssetMap<String, DialogAsset>> dialogAssetBuilder =
             HytaleAssetStore.builder(
-                HyspeechDialogAsset.class,
+                DialogAsset.class,
                 new DefaultAssetMap<>()
             );
 
-        HytaleAssetStore.Builder<String, HyspeechMacroAsset, DefaultAssetMap<String, HyspeechMacroAsset>> macroAssetBuilder =
+        HytaleAssetStore.Builder<String, MacroAsset, DefaultAssetMap<String, MacroAsset>> macroAssetBuilder =
             HytaleAssetStore.builder(
-                HyspeechMacroAsset.class,
+                MacroAsset.class,
                 new DefaultAssetMap<>()
             );
 
         this.getAssetRegistry().register(
             macroAssetBuilder
-                .setPath("HyspeechMacro")
-                .setCodec(HyspeechMacroAsset.CODEC)
-                .setKeyFunction(HyspeechMacroAsset::getId)
+                .setPath("DialogueMacro")
+                .setCodec(MacroAsset.CODEC)
+                .setKeyFunction(MacroAsset::getId)
                 .loadsAfter(Interaction.class)
                 .build()
         );
 
         this.getAssetRegistry().register(
             dialogAssetBuilder
-                .setPath("HyspeechDialog")
-                .setCodec(HyspeechDialogAsset.CODEC)
-                .setKeyFunction(HyspeechDialogAsset::getId)
+                .setPath("Dialogue")
+                .setCodec(DialogAsset.CODEC)
+                .setKeyFunction(DialogAsset::getId)
                 .loadsAfter(Interaction.class)
                 .build()
         );
@@ -164,28 +164,28 @@ public class DialogueMod extends JavaPlugin {
         this.getEventRegistry().register(
             PlayerConnectEvent.class,
             playerConnectEvent ->
-                hyspeechPlayerMap.putIfAbsent(
+                dialoguePlayerMap.putIfAbsent(
                     playerConnectEvent.getPlayerRef(),
-                    new HyspeechPlayer(playerConnectEvent.getPlayerRef())
+                    new DialoguePlayer(playerConnectEvent.getPlayerRef())
                 )
         );
 
         this.getEventRegistry().register(
             PlayerDisconnectEvent.class,
             playerDisconnectEvent -> {
-                HyspeechPlayer player = hyspeechPlayerMap.get(playerDisconnectEvent.getPlayerRef());
+                DialoguePlayer player = dialoguePlayerMap.get(playerDisconnectEvent.getPlayerRef());
 
-                Config<HyspeechPlayerConfig> cfg = new Config<>(
-                    new File("config/hyspeech/player_data/").toPath(),
+                Config<DialoguePlayerConfig> cfg = new Config<>(
+                    new File("config/dialogue/player_data/").toPath(),
                     playerDisconnectEvent.getPlayerRef().getUsername(),
-                    HyspeechPlayerConfig.CODEC
+                    DialoguePlayerConfig.CODEC
                 );
 
                 cfg.load().thenAccept((_cfg) -> {
                     _cfg.setUuid(player.getConfig().get().playerUuid);
                 }).thenAccept((_) -> {
                     cfg.save().thenAccept((_) -> {
-                        hyspeechPlayerMap.remove(playerDisconnectEvent.getPlayerRef());
+                        dialoguePlayerMap.remove(playerDisconnectEvent.getPlayerRef());
                     });
                 });
             }
