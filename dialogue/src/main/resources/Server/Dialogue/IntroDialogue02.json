@@ -1,10 +1,10 @@
 {
+  "Type": "Dialogue1",
   "Entries": [
     {
       "Content": "dialogue.IntroDialogue02.content.0"
     }
   ],
-  "Type": "Dialogue1",
   "Next": "IntroDialogue03",
   "Dialogue Macro": {
     "Commands": [

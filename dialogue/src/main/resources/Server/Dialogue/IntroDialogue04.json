@@ -1,4 +1,5 @@
 {
+  "Type": "Choice3",
   "Entries": [
     {
       "Content": "dialogue.IntroDialogue04.content.0",
@@ -11,6 +12,5 @@
     {
       "Content": "dialogue.IntroDialogue04.content.2"
     }
-  ],
-  "Type": "Choice3"
+  ]
 }

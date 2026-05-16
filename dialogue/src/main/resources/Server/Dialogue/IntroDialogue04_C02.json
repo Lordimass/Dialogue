@@ -1,4 +1,5 @@
 {
+  "Type": "Dialogue4",
   "Entries": [
     {
       "Content": "dialogue.IntroDialogue04_C02.content.0"
@@ -12,6 +13,5 @@
     {
       "Content": "dialogue.IntroDialogue04_C02.content.3"
     }
-  ],
-  "Type": "Dialogue4"
+  ]
 }

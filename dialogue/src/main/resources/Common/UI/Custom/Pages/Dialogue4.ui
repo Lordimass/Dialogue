@@ -1,6 +1,7 @@
 $C = "../DialogueCommon.ui";
 $Sounds = "../DialogueSounds.ui";
 
+// A dialogue box containing 4 text lines
 Group #FormContainer {
     Anchor: (Width: 1000, Height: 250, Bottom: 50);
     Background: #1a1a2e(0.95);

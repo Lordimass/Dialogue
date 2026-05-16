@@ -22,6 +22,9 @@ dependencies {
     // Lombok
     compileOnly("org.projectlombok:lombok:$lombokVersion")
     annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+
+    // HyUI
+    implementation("curse.maven:hyui-1431415:7820303")
 }
 
 hytaleTools {
@@ -43,6 +46,7 @@ hytaleTools {
 
 repositories {
     mavenCentral()
+    maven("https://www.cursemaven.com");
 }
 
 
