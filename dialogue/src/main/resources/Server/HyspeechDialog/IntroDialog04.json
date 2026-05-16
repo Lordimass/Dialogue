@@ -1,0 +1,16 @@
+{
+  "Entries": [
+    {
+      "Content": "hyspeech.dialog.IntroDialog04.content.0",
+      "Next": "IntroDialog04_C01"
+    },
+    {
+      "Content": "hyspeech.dialog.IntroDialog04.content.1",
+      "Next": "IntroDialog04_C02"
+    },
+    {
+      "Content": "hyspeech.dialog.IntroDialog04.content.2"
+    }
+  ],
+  "Type": "Choice3"
+}

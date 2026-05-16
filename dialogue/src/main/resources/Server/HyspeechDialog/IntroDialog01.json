@@ -1,0 +1,10 @@
+{
+  "Type": "TextInput",
+  "Next": "IntroDialog02",
+  "Hyspeech Macro": {
+    "Commands": [
+      "give {username} Tool_Pickaxe_Wood",
+      "give {username} Tool_Pickaxe_Wood"
+    ]
+  }
+}

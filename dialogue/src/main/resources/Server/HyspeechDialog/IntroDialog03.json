@@ -1,0 +1,15 @@
+{
+  "Entries": [
+    {
+      "Content": "hyspeech.dialog.IntroDialog03.content.0"
+    },
+    {
+      "Content": "hyspeech.dialog.IntroDialog03.content.1"
+    },
+    {
+      "Content": "hyspeech.dialog.IntroDialog03.content.3"
+    }
+  ],
+  "Type": "Dialog3",
+  "Next": "IntroDialog04"
+}

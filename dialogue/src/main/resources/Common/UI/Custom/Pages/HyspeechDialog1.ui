@@ -1,0 +1,44 @@
+$C = "../HytCommon.ui";
+$Sounds = "../HytSounds.ui";
+
+Group #FormContainer {
+    Anchor: (Width: 1000, Height: 250, Bottom: 50);
+    Background: #1a1a2e(0.95);
+    LayoutMode: Left;
+    FlexWeight: 1;
+
+    $C.@DecoratedContainer {
+        Anchor: (Width: 1000);
+
+        #Title {
+            $C.@Title #NameTitle {
+                @Text = "";
+            }
+        }
+
+        #Content {
+            LayoutMode: Top;
+            Padding: (Full: 16);
+
+            Group {
+                LayoutMode: Top;
+                Anchor: (Bottom: 12);
+                Background: (TexturePath: "../Common/ContainerPanelPatch.png", Border: 4);
+                Padding: (Full: 12);
+
+                Label #Content0 {
+                    Text: "";
+                    Anchor: (Top: 50, Bottom: 50);
+                    Padding: (Bottom: 6);
+                    Style: (...$C.@Dialog1LabelStyle, HorizontalAlignment: Center, VerticalAlignment: Center);
+                }
+            }
+        }
+    }
+}
+
+$C.@TextButton #NextButton {
+    Text: "NEXT";
+    Anchor: (Width: 192, Height: 48, Bottom: 24);
+    FlexWeight: 1;
+}
