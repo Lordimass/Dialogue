@@ -1,7 +1,7 @@
 plugins {
     idea
     java
-    id("com.azuredoom.hytale-workspace") version "1.0.+"
+    id("com.azuredoom.hytale-workspace") version "1.0.27"
 }
 
 subprojects {

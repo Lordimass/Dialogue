@@ -1,14 +1,66 @@
 <style>
-    .dialog-box {
+    .dialogue-box {
         anchor-width: 1000;
         anchor-height: 250;
         anchor-bottom: 50;
-        background-color: rgb(26 26 46 / 0.95);
+        flex-weight: 1;
+        padding: 17;
+    }
+
+    .title-box {
+        anchor-height: 40;
+        anchor-top: 8;
+        background-image: url("Common/ContainerHeader.png") 20;
+    }
+
+    #title {
+        align: center;
+        font-size: 15;
+        color: #b4c8c9;
+        font-family: "Secondary";
+        font-weight: bold;
+        letter-spacing: 0;
+        padding-top: 6px;
+    }
+
+    .content-box {
+        background-image: url("Common/ContainerFullPatch.png") 20;
+        anchor-height: 220;
+        padding: 12;
+        anchor-top: 40;
+    }
+
+    #dialogue-content {
+        anchor-bottom: 50;
+        font-size: 25;
+        padding-top: 20;
+        color: #b4c8c9;
+        font-family: "Primary";
+        align: center;
+    }
+
+    .container-decoration-top {
+        background-image: url("Common/ContainerDecorationTop.png");
+        anchor-width: 236;
+        anchor-height: 11;
+        anchor-top: 2;
+    }
+
+    .container-decoration-bottom {
+        background-image: url("Common/ContainerDecorationBottom.png");
+        anchor-width: 236;
+        anchor-height: 11;
+        anchor-bottom: -15;
     }
 </style>
 
-<div class="container dialog-box">
-    <div class="container-contents">
-        <p>Hello, World!</p>
+<div class="dialogue-box">
+    <div class="content-box">
+        <p id="dialogue-content">{{$content}}</p>
     </div>
+    <div class="title-box">
+        <p id="title"><i>Test! </i>{{$title}}</p>
+    </div>
+    <div class="container-decoration-top"></div>
+    <div class="container-decoration-bottom"></div>
 </div>

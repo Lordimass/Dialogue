@@ -1,5 +1,6 @@
 package net.queensfall.player.commands;
 
+import au.ellie.hyui.builders.PageBuilder;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
@@ -10,7 +11,8 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import net.queensfall.player.ui.page.DialoguePage;
+import net.queensfall.player.ui.page.DialoguePageManager;
+import net.queensfall.player.ui.page.OldDialoguePage;
 
 import javax.annotation.Nonnull;
 
@@ -27,7 +29,7 @@ public class BeginCommand extends AbstractPlayerCommand {
 
     @Override
     protected void execute(@Nonnull CommandContext commandContext, @Nonnull Store<EntityStore> store, @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
-        String label = commandContext.get(dialogArg);
+        String dialogue = commandContext.get(dialogArg);
 
         PlayerRef playerRef1 = playerArg.get(commandContext);
         Ref<EntityStore> ref1 = playerRef1.getReference();
@@ -40,7 +42,10 @@ public class BeginCommand extends AbstractPlayerCommand {
             return;
         }
 
-        playerComponent.getPageManager().openCustomPage(ref1, store1,
-                new DialoguePage(ref1, store1, playerRef1, label));
+        new DialoguePageManager(playerRef1, store1, dialogue);
+
+//        PageBuilder.pageForPlayer(playerRef1).loadHtml("Pages/Dialogue.html").open(store);
+//        playerComponent.getPageManager().openCustomPage(ref1, store1,
+//                new OldDialoguePage(ref1, store1, playerRef1, label));
     }
 }

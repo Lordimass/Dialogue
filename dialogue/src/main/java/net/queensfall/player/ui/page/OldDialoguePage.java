@@ -17,6 +17,7 @@ import com.hypixel.hytale.server.core.ui.builder.UIEventBuilder;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import lombok.Getter;
+import lombok.Setter;
 import net.queensfall.DialogueMod;
 import net.queensfall.dialogue.DialogueAsset;
 import net.queensfall.dialogue.DialogueType;
@@ -33,7 +34,7 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class DialoguePage extends InteractiveCustomUIPage<DialoguePageData> {
+public class OldDialoguePage extends InteractiveCustomUIPage<DialoguePageData> {
 
     private static final AssetStore<String, DialogueAsset, DefaultAssetMap<String, DialogueAsset>>
             STORE = AssetRegistry.getAssetStore(DialogueAsset.class);
@@ -45,14 +46,14 @@ public class DialoguePage extends InteractiveCustomUIPage<DialoguePageData> {
     private final Store<EntityStore> store;
     public DialogueType currentDialogueType = DialogueType.UNSET;
     public boolean isProcessing = true;
+    @Setter
     public String key;
 
     public String input = "";
 
-    public DialoguePage(@Nonnull Ref<EntityStore> ref, @Nonnull Store<EntityStore> store, PlayerRef playerRef, String key) {
+    public OldDialoguePage(@Nonnull Ref<EntityStore> ref, @Nonnull Store<EntityStore> store, PlayerRef playerRef, String key) {
         super(playerRef, CustomPageLifetime.CanDismissOrCloseThroughInteraction, DialoguePageData.CODEC);
-        setKey(key);
-
+        this.key = key;
         this.ref = ref;
         this.store = store;
     }
@@ -251,7 +252,4 @@ public class DialoguePage extends InteractiveCustomUIPage<DialoguePageData> {
         return STORE.getAssetMap().getAsset(key);
     }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
 }
