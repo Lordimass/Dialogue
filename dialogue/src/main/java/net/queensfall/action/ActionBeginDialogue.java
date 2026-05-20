@@ -1,4 +1,4 @@
-package net.queensfall.dialogue.action;
+package net.queensfall.action;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
@@ -9,8 +9,8 @@ import com.hypixel.hytale.server.npc.asset.builder.BuilderSupport;
 import com.hypixel.hytale.server.npc.corecomponents.ActionBase;
 import com.hypixel.hytale.server.npc.role.Role;
 import com.hypixel.hytale.server.npc.sensorinfo.InfoProvider;
-import net.queensfall.dialogue.action.builder.BuilderActionBeginDialogue;
-import net.queensfall.player.ui.page.OldDialoguePage;
+import net.queensfall.action.builder.BuilderActionBeginDialogue;
+import net.queensfall.player.DialoguePageManager;
 
 import javax.annotation.Nonnull;
 
@@ -31,22 +31,15 @@ public class ActionBeginDialogue extends ActionBase {
     public boolean execute(@Nonnull Ref<EntityStore> ref, @Nonnull Role role, InfoProvider sensorInfo, double dt, @Nonnull Store<EntityStore> store) {
         if (canExecute(ref, role, sensorInfo, dt, store)) {
             Ref<EntityStore> playerReference = role.getStateSupport().getInteractionIterationTarget();
-            if (playerReference == null) {
-                return false;
-            }
+            if (playerReference == null) return false;
 
-            PlayerRef playerRefComponent = store.getComponent(playerReference, PlayerRef.getComponentType());
-            if (playerRefComponent == null) {
-                return false;
-            }
+            PlayerRef playerRef = store.getComponent(playerReference, PlayerRef.getComponentType());
+            if (playerRef == null) return false;
 
             Player playerComponent = store.getComponent(playerReference, Player.getComponentType());
-            if (playerComponent == null) {
-                return false;
-            }
+            if (playerComponent == null) return false;
 
-            playerComponent.getPageManager().openCustomPage(ref, store,
-                    new OldDialoguePage(ref, store, playerRefComponent, this.dialogueId));
+            new DialoguePageManager(playerRef, store, this.dialogueId);
 
             super.execute(ref, role, sensorInfo, dt, store);
             return true;

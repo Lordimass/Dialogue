@@ -18,7 +18,6 @@ public class DialogueCommand extends AbstractPlayerCommand {
 
         addSubCommand(new SetupCommand());
         addSubCommand(new BeginCommand());
-        addSubCommand(new ConfigCommand());
     }
 
     @Override

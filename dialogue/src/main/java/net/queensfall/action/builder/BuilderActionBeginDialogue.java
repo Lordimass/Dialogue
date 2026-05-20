@@ -1,4 +1,4 @@
-package net.queensfall.dialogue.action.builder;
+package net.queensfall.action.builder;
 
 import com.google.gson.JsonElement;
 import com.hypixel.hytale.server.npc.asset.builder.BuilderDescriptorState;
@@ -7,8 +7,8 @@ import com.hypixel.hytale.server.npc.asset.builder.InstructionType;
 import com.hypixel.hytale.server.npc.asset.builder.holder.AssetHolder;
 import com.hypixel.hytale.server.npc.corecomponents.builders.BuilderActionBase;
 import com.hypixel.hytale.server.npc.instructions.Action;
-import net.queensfall.dialogue.action.ActionBeginDialogue;
-import net.queensfall.dialogue.validator.DialogExistsValidator;
+import net.queensfall.action.ActionBeginDialogue;
+import net.queensfall.codec.validator.DialogExistsValidator;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

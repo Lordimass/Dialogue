@@ -1,7 +1,7 @@
-package net.queensfall.dialogue.validator;
+package net.queensfall.codec.validator;
 
 import com.hypixel.hytale.server.npc.asset.builder.validators.AssetValidator;
-import net.queensfall.dialogue.DialogueAsset;
+import net.queensfall.codec.DialogueAsset;
 
 import javax.annotation.Nonnull;
 import java.util.EnumSet;

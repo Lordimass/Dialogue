@@ -1,4 +1,4 @@
-package net.queensfall.util;
+package net.queensfall.parameter;
 
 @FunctionalInterface
 public interface ParameterResolver<C> {

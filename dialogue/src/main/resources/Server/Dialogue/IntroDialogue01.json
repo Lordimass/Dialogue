@@ -1,7 +1,12 @@
 {
-  "Type": "TextInput",
+  "Type": "Dialogue",
+  "Entries": [
+    {
+      "Content": "dialogue.IntroDialogue01.content.0"
+    }
+  ],
   "Next": "IntroDialogue02",
-  "Dialogue Macro": {
+  "DialogueMacro": {
     "Commands": [
       "give {username} Tool_Pickaxe_Wood",
       "give {username} Tool_Pickaxe_Wood"

@@ -1,4 +1,4 @@
-package net.queensfall.util;
+package net.queensfall.parameter;
 
 import java.util.HashMap;
 import java.util.Map;

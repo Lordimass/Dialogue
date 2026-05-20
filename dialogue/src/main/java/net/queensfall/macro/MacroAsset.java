@@ -11,7 +11,8 @@ import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.codecs.array.ArrayCodec;
 import com.hypixel.hytale.codec.validation.ValidatorCache;
-import net.queensfall.dialogue.DialogueType;
+import lombok.Getter;
+import net.queensfall.codec.DialogueType;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -42,9 +43,12 @@ public class MacroAsset implements JsonAssetWithMap<String, DefaultAssetMap<Stri
     private static AssetStore<String, MacroAsset, DefaultAssetMap<String, MacroAsset>> ASSET_STORE;
     public static final ValidatorCache<String> VALIDATOR_CACHE = new ValidatorCache(new AssetKeyValidator(MacroAsset::getAssetStore));
     public AssetExtraInfo.Data extraData;
+    @Getter
     public DialogueType type;
     public String id;
+    @Getter
     public String[] commands;
+    @Getter
     public String next;
 
     public MacroAsset(String id, String[] commands) {
@@ -69,18 +73,6 @@ public class MacroAsset implements JsonAssetWithMap<String, DefaultAssetMap<Stri
     @Override
     public String getId() {
         return this.id;
-    }
-
-    public DialogueType getType() {
-        return this.type;
-    }
-
-    public String[] getCommands() {
-        return this.commands;
-    }
-
-    public String getNext() {
-        return this.next;
     }
 
     @Nonnull

@@ -1,4 +1,4 @@
-package net.queensfall.dialogue;
+package net.queensfall.codec;
 
 import com.hypixel.hytale.assetstore.AssetExtraInfo;
 import com.hypixel.hytale.assetstore.AssetRegistry;
@@ -10,6 +10,7 @@ import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.codecs.EnumCodec;
 import com.hypixel.hytale.codec.codecs.array.ArrayCodec;
+import lombok.Getter;
 import net.queensfall.macro.MacroAsset;
 
 import javax.annotation.Nonnull;
@@ -52,14 +53,14 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
                     )
                     .documentation("The next dialogue that should open after continuing.\n\nThis will eventually be replaced with multiline components.")
                     .add()
-                    .append(new KeyedCodec<>("Typewriter Effect", Codec.BOOLEAN),
+                    .append(new KeyedCodec<>("TypewriterEffect", Codec.BOOLEAN),
                             (obj, val) -> obj.typewriterEffect = val,
                             obj -> obj.typewriterEffect
                     )
                     .documentation("Should the dialogue be written over time like a typewriter?")
                     .add()
                     .append(
-                            new KeyedCodec<>("DialogueMod Macro", MacroAsset.CODEC),
+                            new KeyedCodec<>("DialogueMacro", MacroAsset.CODEC),
                             (obj, val) -> obj.macro = val,
                             obj -> obj.macro
                     )
@@ -68,10 +69,14 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
 
     private static AssetStore<String, DialogueAsset, DefaultAssetMap<String, DialogueAsset>> ASSET_STORE;
     public AssetExtraInfo.Data extraData;
-    public DialogueType type = DialogueType.DIALOGUE_1;
+    @Getter
+    public DialogueType type = DialogueType.Dialogue;
+    @Getter
     public MacroAsset macro;
     public String id;
+    @Getter
     public DialogueEntry[] entries;
+    @Getter
     public String next;
 
     public boolean typewriterEffect = false;
@@ -95,6 +100,7 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
         return DialogueAsset.getAssetStore().getAssetMap();
     }
 
+    // TODO
     public boolean isTypewriterEffectEnabled() {
         return this.typewriterEffect;
     }
@@ -102,22 +108,6 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
     @Override
     public String getId() {
         return this.id;
-    }
-
-    public DialogueType getType() {
-        return this.type;
-    }
-
-    public DialogueEntry[] getEntries() {
-        return this.entries;
-    }
-
-    public String getNext() {
-        return this.next;
-    }
-
-    public MacroAsset getMacro() {
-        return this.macro;
     }
 
     @Nonnull

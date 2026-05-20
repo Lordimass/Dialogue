@@ -1,6 +1,5 @@
 package net.queensfall.player.commands;
 
-import au.ellie.hyui.builders.PageBuilder;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
@@ -11,8 +10,7 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import net.queensfall.player.ui.page.DialoguePageManager;
-import net.queensfall.player.ui.page.OldDialoguePage;
+import net.queensfall.player.DialoguePageManager;
 
 import javax.annotation.Nonnull;
 
@@ -43,9 +41,5 @@ public class BeginCommand extends AbstractPlayerCommand {
         }
 
         new DialoguePageManager(playerRef1, store1, dialogue);
-
-//        PageBuilder.pageForPlayer(playerRef1).loadHtml("Pages/Dialogue.html").open(store);
-//        playerComponent.getPageManager().openCustomPage(ref1, store1,
-//                new OldDialoguePage(ref1, store1, playerRef1, label));
     }
 }

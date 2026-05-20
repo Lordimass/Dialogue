@@ -1,15 +1,16 @@
 {
-  "Type": "Dialogue3",
+  "Type": "Choice",
   "Entries": [
     {
-      "Content": "dialogue.IntroDialogue03.content.0"
+      "Content": "dialogue.IntroDialogue03.content.0",
+      "Next": "IntroDialogue03_C01"
     },
     {
-      "Content": "dialogue.IntroDialogue03.content.1"
+      "Content": "dialogue.IntroDialogue03.content.1",
+      "Next": "IntroDialogue03_C02"
     },
     {
-      "Content": "dialogue.IntroDialogue03.content.3"
+      "Content": "dialogue.IntroDialogue03.content.2"
     }
-  ],
-  "Next": "IntroDialogue04"
+  ]
 }

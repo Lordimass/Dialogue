@@ -30,6 +30,16 @@
         anchor-top: 40;
     }
 
+    .choice-button {
+        anchor-width: 900;
+        anchor-height: 35;
+    }
+
+    #choice0 {anchor-top: 30}
+    #choice1 {anchor-top: 70}
+    #choice2 {anchor-top: 110}
+    #choice3 {anchor-top: 150}
+
     #dialogue-content {
         anchor-bottom: 50;
         font-size: 25;
@@ -52,15 +62,29 @@
         anchor-height: 11;
         anchor-bottom: -15;
     }
+
+    #next-button {
+        anchor-width: 192;
+        anchor-height: 35;
+        anchor-bottom: 0;
+        flex-weight: 1;
+    }
 </style>
 
 <div class="dialogue-box">
     <div class="content-box">
-        <p id="dialogue-content">{{$content}}</p>
+        <p id="dialogue-content"><span>{{$content}}</span></p>
+        <button class="choice-button secondary-button" id="choice0" style="display: {{$choice0Display|none}}">{{$choice0}}</button>
+        <button class="choice-button secondary-button" id="choice1" style="display: {{$choice1Display|none}}">{{$choice1}}</button>
+        <button class="choice-button secondary-button" id="choice2" style="display: {{$choice2Display|none}}">{{$choice2}}</button>
+        <button class="choice-button secondary-button" id="choice3" style="display: {{$choice3Display|none}}">{{$choice3}}</button>
     </div>
     <div class="title-box">
-        <p id="title"><i>Test! </i>{{$title}}</p>
+        <p id="title">{{$title}}</p>
     </div>
     <div class="container-decoration-top"></div>
     <div class="container-decoration-bottom"></div>
+    <button id="next-button" style="display: {{$nextButtonDisplay|none}}">
+        {{$nextButtonText|NEXT}}
+    </button>
 </div>
