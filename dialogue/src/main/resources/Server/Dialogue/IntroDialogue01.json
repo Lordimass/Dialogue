@@ -5,11 +5,21 @@
       "Content": "dialogue.IntroDialogue01.content.0"
     }
   ],
-  "Next": "IntroDialogue02",
-  "DialogueMacro": {
-    "Commands": [
-      "give {username} Tool_Pickaxe_Wood",
-      "give {username} Tool_Pickaxe_Wood"
-    ]
+  "Title": "dialogue.IntroDialogue01.name",
+  "Next": {
+    "Type": "Dialogue",
+    "Title": "dialogue.IntroDialogue02.name",
+    "Entries": [
+      {
+        "Content": "dialogue.IntroDialogue02.content.0"
+      },
+      {
+        "Content": "dialogue.IntroDialogue02.content.1"
+      },
+      {
+        "Content": "dialogue.IntroDialogue02.content.3"
+      }
+    ],
+    "NextId": "IntroDialogue03"
   }
 }

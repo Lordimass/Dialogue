@@ -30,18 +30,23 @@ public class DialoguePageManager {
     private PageBuilder builder;
     private HyUIPage hyUIPage;
     @Getter
-    private DialogueAsset dialogueAsset;
+    private DialogueAsset dialogue;
 
     public DialoguePageManager(@Nonnull PlayerRef playerRef,
                                @Nonnull Store<EntityStore> store,
-                               @Nonnull String dialogId
+                               DialogueAsset dialogue
                         ) {
         this.playerRef = playerRef;
         this.store = store;
-        openDialogue(dialogId);
+        openDialogue(dialogue);
     }
 
-    private void openDialogue(String dialogName) {
+    private void openDialogue(DialogueAsset dialogue) {
+        this.dialogue = dialogue;
+        if (dialogue == null) {
+            if (hyUIPage != null) hyUIPage.close();
+            return;
+        }
         builder = PageBuilder
             .pageForPlayer(playerRef)
             .loadHtml("Pages/Dialogue.html", new TemplateProcessor())
@@ -50,73 +55,66 @@ public class DialoguePageManager {
         hyUIPage = builder.open(store);
         assert hyUIPage != null;
 
-        dialogueAsset = STORE.getAssetMap().getAsset(dialogName);
-        if (dialogueAsset == null) {
-            LOGGER.atSevere().log("DialogueAsset '"+ dialogName+"' could not be found");
-            hyUIPage.close();
-            return;
-        }
-
-        switch (dialogueAsset.getType()) {
+        switch (this.dialogue.getType()) {
             case Dialogue -> populateDialogue();
             case Choice -> populateChoices();
             default -> buildNEXTButton();
         }
-
         hyUIPage.updatePage(true);
+
+//         TODO: Pass action info down from the action, or run EntryPoint asset instead.
+//        if (dialogueAsset.getActions() != null) dialogueAsset.actions.execute()
     }
 
     private void populateDialogue() {
         StringBuilder entries = new StringBuilder();
-        for (DialogueEntry entry : dialogueAsset.entries) {
+        for (DialogueEntry entry : dialogue.entries) {
             entries
-                .append(translateWithHYUIML(entry.content, playerRef))
+                .append(translateWithHYUIML(entry.getContent(), playerRef))
                 .append("\n");
         }
         entries.delete(entries.length()-1, entries.length());
 
         builder.getTemplateProcessor()
-            .setVariable("title", translateWithHYUIML("dialogue." + dialogueAsset.getId() + ".name", playerRef))
+            .setVariable("title", translateWithHYUIML(dialogue.getTitle(), playerRef))
             .setVariable("content", entries.toString());
         buildNEXTButton();
     }
 
     private void populateChoices() {
         TemplateProcessor template = builder.getTemplateProcessor();
-        if (dialogueAsset.entries.length >  MAX_CHOICES) {
+        if (dialogue.entries.length >  MAX_CHOICES) {
             LOGGER.atWarning().log(
                 "Dialogue choice page only supports up to 4 entries. "
-                    + dialogueAsset.id
+                    + dialogue.id
                     + " has "
-                    + dialogueAsset.entries.length);
+                    + dialogue.entries.length);
         }
-        for (int i = 0; i < Math.min(dialogueAsset.entries.length, MAX_CHOICES); i++) {
-            DialogueEntry entry = dialogueAsset.entries[i];
-            String content = translateWithHYUIML(entry.content, playerRef);
+        for (int i = 0; i < Math.min(dialogue.entries.length, MAX_CHOICES); i++) {
+            DialogueEntry entry = dialogue.entries[i];
+            String content = translateWithHYUIML(entry.getContent(), playerRef);
             template
                 .setVariable("choice"+i, content)
                 .setVariable("choice"+i+"Display", "block");
             builder.addEventListener("choice"+i, CustomUIEventBindingType.Activating, (_, ctx) -> {
-                if (entry.next == null) {
+                if (entry.getNext() == null) {
                     ctx.getPage().ifPresent(HyUIPage::close);
                     return;
                 }
-                openDialogue(entry.next);
+                openDialogue(entry.getNext());
             });
         }
     }
 
     private void buildNEXTButton() {
+        boolean isNextExists = dialogue.getNext() != null;
         builder.getTemplateProcessor()
             .setVariable("nextButtonDisplay", "block")
-            .setVariable("nextButtonText", dialogueAsset.next == null ? "CLOSE" : "NEXT");
+            .setVariable("nextButtonText", isNextExists ? "NEXT" : "CLOSE");
         hyUIPage.updatePage(false);
         builder.addEventListener("next-button", CustomUIEventBindingType.Activating, (_, ctx) -> {
-            if (dialogueAsset.next == null) {
-                ctx.getPage().ifPresent(HyUIPage::close);
-                return;
-            }
-            openDialogue(dialogueAsset.next);
+            if (isNextExists) openDialogue(dialogue.getNext());
+            else ctx.getPage().ifPresent(HyUIPage::close);
         });
     }
 }

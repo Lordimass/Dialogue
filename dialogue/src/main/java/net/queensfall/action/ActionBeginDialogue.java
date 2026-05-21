@@ -10,6 +10,7 @@ import com.hypixel.hytale.server.npc.corecomponents.ActionBase;
 import com.hypixel.hytale.server.npc.role.Role;
 import com.hypixel.hytale.server.npc.sensorinfo.InfoProvider;
 import net.queensfall.action.builder.BuilderActionBeginDialogue;
+import net.queensfall.codec.DialogueAsset;
 import net.queensfall.player.DialoguePageManager;
 
 import javax.annotation.Nonnull;
@@ -39,7 +40,7 @@ public class ActionBeginDialogue extends ActionBase {
             Player playerComponent = store.getComponent(playerReference, Player.getComponentType());
             if (playerComponent == null) return false;
 
-            new DialoguePageManager(playerRef, store, this.dialogueId);
+            new DialoguePageManager(playerRef, store, DialogueAsset.getAsset(this.dialogueId));
 
             super.execute(ref, role, sensorInfo, dt, store);
             return true;

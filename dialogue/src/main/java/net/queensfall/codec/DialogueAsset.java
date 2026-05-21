@@ -7,77 +7,102 @@ import com.hypixel.hytale.assetstore.codec.AssetBuilderCodec;
 import com.hypixel.hytale.assetstore.map.DefaultAssetMap;
 import com.hypixel.hytale.assetstore.map.JsonAssetWithMap;
 import com.hypixel.hytale.codec.Codec;
+import com.hypixel.hytale.codec.ExtraInfo;
 import com.hypixel.hytale.codec.KeyedCodec;
+import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.codecs.EnumCodec;
 import com.hypixel.hytale.codec.codecs.array.ArrayCodec;
+import com.hypixel.hytale.codec.schema.SchemaContext;
+import com.hypixel.hytale.codec.schema.config.Schema;
+import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.server.npc.instructions.ActionList;
 import lombok.Getter;
-import net.queensfall.macro.MacroAsset;
+import lombok.ToString;
+import org.bson.BsonValue;
+import org.jspecify.annotations.NonNull;
+import javax.annotation.Nullable;
 
-import javax.annotation.Nonnull;
-import java.util.Arrays;
-
+@ToString
 public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<String, DialogueAsset>> {
-
+    private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
     public static final EnumCodec<DialogueType> DIALOG_TYPE_ENUM_CODEC = new EnumCodec<>(DialogueType.class);
 
-    public static final AssetBuilderCodec<String, DialogueAsset> CODEC =
-            AssetBuilderCodec
-                    .builder(
-                            DialogueAsset.class,
-                            DialogueAsset::new,
-                            Codec.STRING,
-                            (asset, s) -> asset.id = s,
-                            asset -> asset.id,
-                            (asset, data) -> asset.extraData = data,
-                            asset -> asset.extraData
-                    )
-                    .append(
-                            new KeyedCodec<>("Type", DIALOG_TYPE_ENUM_CODEC),
-                            (obj, val) -> obj.type = val,
-                            obj -> obj.type
-                    )
-                    .add()
-                    .append(
-                            new KeyedCodec<>("Entries", new ArrayCodec<>(DialogueEntry.CODEC, DialogueEntry[]::new)),
-                            (asset, entries) -> {
-                                asset.entries = entries;
-                            },
-                            asset -> asset.entries
-                    )
-                    .documentation("Content of the dialogue.\n\nThis will eventually be replaced with multiline components.")
-                    .add()
-                    .append(
-                            new KeyedCodec<>("Next", Codec.STRING),
-                            (asset, s) -> asset.next = s,
-                            asset -> asset.next
-                    )
-                    .documentation("The next dialogue that should open after continuing.\n\nThis will eventually be replaced with multiline components.")
-                    .add()
-                    .append(new KeyedCodec<>("TypewriterEffect", Codec.BOOLEAN),
-                            (obj, val) -> obj.typewriterEffect = val,
-                            obj -> obj.typewriterEffect
-                    )
-                    .documentation("Should the dialogue be written over time like a typewriter?")
-                    .add()
-                    .append(
-                            new KeyedCodec<>("DialogueMacro", MacroAsset.CODEC),
-                            (obj, val) -> obj.macro = val,
-                            obj -> obj.macro
-                    )
-                    .add()
-                    .build();
+    public static final BuilderCodec<DialogueAsset> CODEC =
+        BuilderCodec.builder(DialogueAsset.class, DialogueAsset::new)
+            .append(
+                new KeyedCodec<>("Type", DIALOG_TYPE_ENUM_CODEC),
+                (obj, val) -> obj.type = val,
+                obj -> obj.type
+            )
+            .add()
+            .append(
+                new KeyedCodec<>("Entries", new ArrayCodec<>(DialogueEntry.CODEC, DialogueEntry[]::new)),
+                (asset, entries) -> {
+                    asset.entries = entries;
+                },
+                asset -> asset.entries
+            )
+            .documentation("Content of the dialogue.")
+            .add()
+            .append(
+                new KeyedCodec<>("Title", Codec.STRING),
+                (asset, s) -> asset.title = s,
+                asset -> asset.title
+            )
+            .documentation("Title of the dialogue. Usually the name of the person speaking.")
+            .add()
+            .append(
+                new KeyedCodec<>("NextId", Codec.STRING),
+                (asset, s) -> asset.nextId = s,
+                asset -> asset.nextId
+            )
+            .documentation("The asset ID of the next dialogue that should open after continuing.")
+            .add()
+            .append(
+                new KeyedCodec<>("Next", new LazyCodec()),
+                (asset, s) -> asset.next = s,
+                asset -> asset.next
+            )
+            .documentation("The next dialogue to open after this one. Use `NextId` instead to reference a separate dialogue asset instead of inlining it here.")
+            .add()
+            .append(new KeyedCodec<>("TypewriterEffect", Codec.BOOLEAN),
+                (obj, val) -> obj.typewriterEffect = val,
+                obj -> obj.typewriterEffect
+            )
+            .documentation("Should the dialogue be written over time like a typewriter?")
+            .add()
+//            .append(
+//                new KeyedCodec<>("Actions", BuilderCodec.builder(ActionList.class, () -> ActionList.EMPTY_ACTION_LIST).build()),
+//                (obj, val) -> obj.actions = val,
+//                obj -> obj.actions
+//            )
+//            .add()
+            .build();
+
+    public static final AssetBuilderCodec<String, DialogueAsset> ASSET_BUILDER_CODEC =
+        AssetBuilderCodec.wrap(
+            DialogueAsset.CODEC,
+            Codec.STRING,
+            (asset, s) -> asset.id = s,
+            asset -> asset.id,
+            (asset, data) -> asset.extraData = data,
+            asset -> asset.extraData
+        );
 
     private static AssetStore<String, DialogueAsset, DefaultAssetMap<String, DialogueAsset>> ASSET_STORE;
-    public AssetExtraInfo.Data extraData;
+    private AssetExtraInfo.Data extraData;
     @Getter
-    public DialogueType type = DialogueType.Dialogue;
+    private DialogueType type = DialogueType.Dialogue;
     @Getter
-    public MacroAsset macro;
+    private ActionList actions;
     public String id;
     @Getter
     public DialogueEntry[] entries;
+    private String nextId;
+    private DialogueAsset next;
     @Getter
-    public String next;
+    @Nullable
+    private String title;
 
     public boolean typewriterEffect = false;
 
@@ -110,9 +135,31 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
         return this.id;
     }
 
-    @Nonnull
-    public String toString() {
-        return "DialogueAsset{id='" + this.id + "', entries='" + Arrays.toString(this.entries) + "'}";
+    @Nullable
+    public static DialogueAsset getAsset(String key) {
+        DialogueAsset asset = AssetRegistry
+            .getAssetStore(DialogueAsset.class)
+            .getAssetMap()
+            .getAsset(key);
+        if (asset == null) LOGGER.atSevere().log("DialogueAsset '"+key+"' could not be found");
+        return asset;
+    }
+
+    @Nullable
+    public DialogueAsset getNext() {
+        if (this.next != null) {
+            return this.next;
+        } else if (this.nextId != null) {
+            return getAsset(this.nextId);
+        }
+        return null;
+    }
+
+    /* Lazy DialogueAsset.CODEC work around so that the codec can be self-referential. */
+    public static class LazyCodec implements Codec<DialogueAsset> {
+        public @NonNull Schema toSchema(@NonNull SchemaContext schemaContext) {return DialogueAsset.CODEC.toSchema(schemaContext);}
+        public @Nullable DialogueAsset decode(BsonValue bsonValue, ExtraInfo extraInfo) {return DialogueAsset.CODEC.decode(bsonValue, extraInfo);}
+        public BsonValue encode(DialogueAsset dialogueAsset, ExtraInfo extraInfo) {return DialogueAsset.CODEC.encode(dialogueAsset, extraInfo);}
     }
 
 }

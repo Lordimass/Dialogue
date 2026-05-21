@@ -10,6 +10,7 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import net.queensfall.codec.DialogueAsset;
 import net.queensfall.player.DialoguePageManager;
 
 import javax.annotation.Nonnull;
@@ -27,7 +28,7 @@ public class BeginCommand extends AbstractPlayerCommand {
 
     @Override
     protected void execute(@Nonnull CommandContext commandContext, @Nonnull Store<EntityStore> store, @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
-        String dialogue = commandContext.get(dialogArg);
+        String dialogueId = commandContext.get(dialogArg);
 
         PlayerRef playerRef1 = playerArg.get(commandContext);
         Ref<EntityStore> ref1 = playerRef1.getReference();
@@ -40,6 +41,6 @@ public class BeginCommand extends AbstractPlayerCommand {
             return;
         }
 
-        new DialoguePageManager(playerRef1, store1, dialogue);
+        new DialoguePageManager(playerRef1, store1, DialogueAsset.getAsset(dialogueId));
     }
 }

@@ -1,5 +1,6 @@
 {
   "Type": "Dialogue",
+  "Title": "dialogue.IntroDialogue03_C02.name",
   "Entries": [
     {
       "Content": "dialogue.IntroDialogue03_C02.content.0"

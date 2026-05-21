@@ -11,7 +11,6 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.npc.NPCPlugin;
 import net.queensfall.action.builder.BuilderActionBeginDialogue;
 import net.queensfall.codec.DialogueAsset;
-import net.queensfall.macro.MacroAsset;
 import net.queensfall.parameter.ParameterContext;
 import net.queensfall.parameter.ParameterProcessor;
 import net.queensfall.parameter.ParameterResolver;
@@ -79,25 +78,10 @@ public class DialogueMod extends JavaPlugin {
                 new DefaultAssetMap<>()
             );
 
-        HytaleAssetStore.Builder<String, MacroAsset, DefaultAssetMap<String, MacroAsset>> macroAssetBuilder =
-            HytaleAssetStore.builder(
-                MacroAsset.class,
-                new DefaultAssetMap<>()
-            );
-
-        this.getAssetRegistry().register(
-            macroAssetBuilder
-                .setPath("DialogueMacro")
-                .setCodec(MacroAsset.CODEC)
-                .setKeyFunction(MacroAsset::getId)
-                .loadsAfter(Interaction.class)
-                .build()
-        );
-
         this.getAssetRegistry().register(
             dialogAssetBuilder
                 .setPath("Dialogue")
-                .setCodec(DialogueAsset.CODEC)
+                .setCodec(DialogueAsset.ASSET_BUILDER_CODEC)
                 .setKeyFunction(DialogueAsset::getId)
                 .loadsAfter(Interaction.class)
                 .build()

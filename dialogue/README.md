@@ -68,22 +68,22 @@ interaction with NPCs. An example `DialogueAsset` is included below:
   "Next": "IntroDialogue02"
 }
 ```
-| Key       | Example(s)                                                                                                                        | Description                                                                                                                                                                         |
-|-----------|-----------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `Type`    | `"Dialogue"`, `"Choice"`                                                                                                          | The type of dialogue box to create. `"Dialogue"` is a standard box with text only, `"Choice"` creates a multiple choice box with different options for the player.                  |
-| `Entries` | `[{"Content": "Dialogue content!"}]`,<br><br> `[{"Content": "Option1", "Next": "Option1DialogueResult"}, {"Content": "Option2"}]` | A list of `DialogueEntry` objects. If `Type` is `"Choice"` you can specify a `Next` on each entry to choose the dialogue asset to open when this option is chosen.                  |
-| `Next`    | `"NextDialogueID"`                                                                                                                | The ID of the next dialogue asset to open when the user clicks "Next". If this is ommitted, this will be treated as the last in the chain and the button will read "Close" instead. |
+| Key       | Example(s)                                                                                                                                                            | Description                                                                                                                                                                                     |
+|-----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Type`    | `"Dialogue"`, `"Choice"`                                                                                                                                              | The type of dialogue box to create. `"Dialogue"` is a standard box with text only, `"Choice"` creates a multiple choice box with different options for the player.                              |
+| `Entries` | `[{"Content": "Dialogue content!"}]`,<br><br> `[{"Content": "Option1", "NextId": "Option1DialogueResult"}, {"Content": "Option2", "Next": {"Type": "Dialogue", ...}]` | A list of `DialogueEntry` objects. If `Type` is `"Choice"` you can specify a `Next` on each entry to choose the dialogue asset to open when this option is chosen.                              |
+| `Title`   | `"Name of Speaker"`                                                                                                                                                   | String text to add as a title to the dialogue box. Usually this will be the name of the entity speaking. Try `{username}` to include the player's name here.                                    |
+| `NextId`  | `"NextDialogueID"`                                                                                                                                                    | The ID of the next dialogue asset to open when the user clicks "Next". If this is ommitted, this will be treated as the last in the chain and the button will read "Close" instead.             |
+| `Next`    | `{"Type": "Dialogue", "Entries": [...], ...}`                                                                                                                         | The next dialogue to open when the user clicks "Next". This is used instead of `NextId` to inline dialogue objects, preventing the necessity to create separates file for every new dialogue.   |
 
 # Localisation and `.lang` Files
 Dialogue fully supports localisation of NPC dialogue, simply supply the `.lang` keys in your `DialogueAssets` and the
 mod will take the correctly localised string for the given player.
-## Dialogue Names
-If you supply a key in `dialogue.lang` in the format `{{DialogueAssetID}}.name` you can supply a name for the NPC who
-will be speaking the line.
 
 # Dynamic and Rich Text Content
 Sometimes you want a splash of colour in your dialogue, or perhaps some *italics*, or maybe even to refer to the player 
-by name? You can do all of this using placeholders and rich text tags.
+by name? You can do all of this using placeholders and rich text tags. This is all supported in `.lang` files as well,
+so you can keep your dynamic and rich text localised.
 
 | Placeholder                              | Result                                         |
 |------------------------------------------|------------------------------------------------|
