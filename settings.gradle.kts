@@ -16,3 +16,5 @@ plugins {
 rootProject.name = "Queen\'s Fall Plugins"
 include("common", "queens_fall", "dialogue")
 
+
+include("gold-economy")
