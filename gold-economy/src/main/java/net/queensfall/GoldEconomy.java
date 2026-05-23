@@ -1,17 +1,35 @@
 package net.queensfall;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class GoldEconomy {
-    static void main() {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        IO.println(String.format("Hello and welcome!"));
+import com.hypixel.hytale.component.ComponentType;
+import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.server.core.plugin.JavaPlugin;
+import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
+import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import lombok.Getter;
+import net.queensfall.command.EconomyCommand;
+import net.queensfall.component.MoneyComponent;
+import org.jspecify.annotations.NonNull;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            IO.println("i = " + i);
-        }
+public class GoldEconomy extends JavaPlugin {
+    private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
+    private static GoldEconomy INSTANCE;
+
+    @Getter
+    private static ComponentType<EntityStore, MoneyComponent> moneyComponentType;
+
+    public GoldEconomy(@NonNull JavaPluginInit init) {
+        super(init);
+        INSTANCE = this;
+    }
+
+    @Override
+    public void setup() {
+        moneyComponentType = this.getEntityStoreRegistry().registerComponent(MoneyComponent.class, MoneyComponent::new);
+
+        this.getCommandRegistry().registerCommand(new EconomyCommand());
+    }
+
+    public static GoldEconomy get() {
+        return INSTANCE;
     }
 }
