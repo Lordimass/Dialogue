@@ -11,7 +11,7 @@ subprojects {
 }
 
 hytaleWorkspace {
-    modProjects = listOf(":queens_fall", ":dialogue")
+    modProjects = listOf(":queens_fall", ":dialogue", ":gold-economy")
     hostProject = ":queens_fall"
 
     manifestGroup = property("manifest_group").toString()

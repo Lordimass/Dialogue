@@ -7,6 +7,7 @@
   ],
   "Title": "dialogue.IntroDialogue01.name",
   "Next": {
+    "BlockIdentifier": "IntroDialogue02",
     "Type": "Dialogue",
     "Title": "dialogue.IntroDialogue02.name",
     "Entries": [

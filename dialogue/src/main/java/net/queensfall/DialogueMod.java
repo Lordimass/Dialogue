@@ -1,6 +1,7 @@
 package net.queensfall;
 
 import com.hypixel.hytale.assetstore.map.DefaultAssetMap;
+import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.server.core.asset.HytaleAssetStore;
 import com.hypixel.hytale.server.core.event.events.player.PlayerConnectEvent;
 import com.hypixel.hytale.server.core.event.events.player.PlayerDisconnectEvent;
@@ -8,15 +9,19 @@ import com.hypixel.hytale.server.core.modules.interaction.interaction.config.Int
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
+import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.NPCPlugin;
+import lombok.Getter;
 import net.queensfall.action.builder.BuilderActionBeginDialogue;
 import net.queensfall.codec.DialogueAsset;
+import net.queensfall.component.NPCDialogueComponent;
 import net.queensfall.parameter.ParameterContext;
 import net.queensfall.parameter.ParameterProcessor;
 import net.queensfall.parameter.ParameterResolver;
 import net.queensfall.player.DialoguePlayer;
 import net.queensfall.player.DialoguePlayerConfig;
 import net.queensfall.player.commands.DialogueCommand;
+import net.queensfall.sensor.builder.BuilderSensorDialogue;
 
 import java.io.File;
 import java.util.Map;
@@ -27,6 +32,9 @@ public class DialogueMod extends JavaPlugin {
     public static final Map<PlayerRef, DialoguePlayer> dialoguePlayerMap = new ConcurrentHashMap<>();
     private static DialogueMod INSTANCE;
     private final Map<String, ParameterProcessor<?>> processors = new ConcurrentHashMap<>();
+
+    @Getter
+    private static ComponentType<EntityStore, NPCDialogueComponent> dialogueComponentType;
 
     public DialogueMod(JavaPluginInit init) {
         super(init);
@@ -63,8 +71,11 @@ public class DialogueMod extends JavaPlugin {
         DialogueMod.get().registerParameter("{uuid}", PlayerRef.class, p -> p.getUuid().toString());
         DialogueMod.get().registerParameter("{lang}", PlayerRef.class, PlayerRef::getLanguage);
 
+        dialogueComponentType = this.getEntityStoreRegistry().registerComponent(NPCDialogueComponent.class, NPCDialogueComponent::new);
+
         this.getCommandRegistry().registerCommand(new DialogueCommand());
 
+        NPCPlugin.get().registerCoreComponentType("Dialogue", BuilderSensorDialogue::new);
         NPCPlugin.get().registerCoreComponentType("BeginDialogue", BuilderActionBeginDialogue::new);
 
         registerAssetTypes();

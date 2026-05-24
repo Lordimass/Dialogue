@@ -29,18 +29,7 @@ public class BeginCommand extends AbstractPlayerCommand {
     @Override
     protected void execute(@Nonnull CommandContext commandContext, @Nonnull Store<EntityStore> store, @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
         String dialogueId = commandContext.get(dialogArg);
-
         PlayerRef playerRef1 = playerArg.get(commandContext);
-        Ref<EntityStore> ref1 = playerRef1.getReference();
-        assert ref1 != null;
-        Store<EntityStore> store1 = ref1.getStore();
-
-        Player playerComponent = store.getComponent(ref1, Player.getComponentType());
-
-        if (playerComponent == null) {
-            return;
-        }
-
-        new DialoguePageManager(playerRef1, store1, DialogueAsset.getAsset(dialogueId));
+        new DialoguePageManager(playerRef1, ref, DialogueAsset.getAsset(dialogueId));
     }
 }

@@ -160,31 +160,11 @@
               }
             },
             {
-              "$Comment": "Return to Watching after interaction ends",
               "Sensor": {
-                "Type": "Any"
+                "Type": "Dialogue",
+                "BlockIdentifier": "IntroDialogue02"
               },
-              "Actions": [
-                {
-                  "Type": "Timeout",
-                  "Delay": [
-                    1,
-                    1
-                  ],
-                  "Action": {
-                    "Type": "Sequence",
-                    "Actions": [
-                      {
-                        "Type": "ReleaseTarget"
-                      },
-                      {
-                        "Type": "State",
-                        "State": "Watching"
-                      }
-                    ]
-                  }
-                }
-              ]
+              "Actions": []
             }
           ]
         }

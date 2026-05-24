@@ -2,10 +2,7 @@ package net.queensfall.player;
 
 import au.ellie.hyui.builders.*;
 import au.ellie.hyui.html.TemplateProcessor;
-import com.hypixel.hytale.assetstore.AssetRegistry;
-import com.hypixel.hytale.assetstore.AssetStore;
-import com.hypixel.hytale.assetstore.map.DefaultAssetMap;
-import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
@@ -14,45 +11,43 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import lombok.Getter;
 import net.queensfall.codec.DialogueAsset;
 import net.queensfall.codec.DialogueEntry;
+import net.queensfall.component.NPCDialogueComponent;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Objects;
 
 import static net.queensfall.util.TranslationUtils.translateWithHYUIML;
 
 public class DialoguePageManager {
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
-    private static final AssetStore<String, DialogueAsset, DefaultAssetMap<String, DialogueAsset>>
-        STORE = AssetRegistry.getAssetStore(DialogueAsset.class);
-
     private static final int MAX_CHOICES = 4;
 
     private final PlayerRef playerRef;
-    private final Store<EntityStore> store;
+    private final Ref<EntityStore> npcRef;
     private PageBuilder builder;
     private HyUIPage hyUIPage;
     @Getter
     private DialogueAsset dialogue;
 
-    public DialoguePageManager(@Nonnull PlayerRef playerRef,
-                               @Nonnull Store<EntityStore> store,
+    public DialoguePageManager(@Nonnull PlayerRef playerRef, @Nullable Ref<EntityStore> npcRef,
                                DialogueAsset dialogue
                         ) {
         this.playerRef = playerRef;
-        this.store = store;
+        this.npcRef = npcRef;
         openDialogue(dialogue);
     }
 
     private void openDialogue(DialogueAsset dialogue) {
         this.dialogue = dialogue;
-        if (dialogue == null) {
-            if (hyUIPage != null) hyUIPage.close();
-            return;
-        }
+        if (dialogue == null) {if (hyUIPage != null) close();  return;}
         builder = PageBuilder
             .pageForPlayer(playerRef)
             .loadHtml("Pages/Dialogue.html", new TemplateProcessor())
             .enableRuntimeTemplateUpdates(true)
+            .onDismiss(this::closeCallback)
             .withLifetime(CustomPageLifetime.CanDismiss);
-        hyUIPage = builder.open(store);
+        hyUIPage = builder.open(Objects.requireNonNull(playerRef.getReference()).getStore());
         assert hyUIPage != null;
 
         switch (this.dialogue.getType()) {
@@ -62,8 +57,7 @@ public class DialoguePageManager {
         }
         hyUIPage.updatePage(true);
 
-//         TODO: Pass action info down from the action, or run EntryPoint asset instead.
-//        if (dialogueAsset.getActions() != null) dialogueAsset.actions.execute()
+        NPCDialogueComponent.update(npcRef, dialogue, playerRef);
     }
 
     private void populateDialogue() {
@@ -96,11 +90,8 @@ public class DialoguePageManager {
             template
                 .setVariable("choice"+i, content)
                 .setVariable("choice"+i+"Display", "block");
-            builder.addEventListener("choice"+i, CustomUIEventBindingType.Activating, (_, ctx) -> {
-                if (entry.getNext() == null) {
-                    ctx.getPage().ifPresent(HyUIPage::close);
-                    return;
-                }
+            builder.addEventListener("choice"+i, CustomUIEventBindingType.Activating, _ -> {
+                if (entry.getNext() == null) {close();return;}
                 openDialogue(entry.getNext());
             });
         }
@@ -114,7 +105,15 @@ public class DialoguePageManager {
         hyUIPage.updatePage(false);
         builder.addEventListener("next-button", CustomUIEventBindingType.Activating, (_, ctx) -> {
             if (isNextExists) openDialogue(dialogue.getNext());
-            else ctx.getPage().ifPresent(HyUIPage::close);
+            else close();
         });
+    }
+
+    private void closeCallback(HyUIPage hyUIPage, Boolean aBoolean) {
+        NPCDialogueComponent.clear(npcRef);
+    }
+
+    public void close() {
+        hyUIPage.close();
     }
 }

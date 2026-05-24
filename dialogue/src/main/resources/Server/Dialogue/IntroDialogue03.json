@@ -5,6 +5,7 @@
     {
       "Content": "dialogue.IntroDialogue03.content.0",
       "Next": {
+        "BlockIdentifier": "IntroDialogue03_C01",
         "Type": "Dialogue",
         "Title": "dialogue.IntroDialogue03_C01.name",
         "Entries": [

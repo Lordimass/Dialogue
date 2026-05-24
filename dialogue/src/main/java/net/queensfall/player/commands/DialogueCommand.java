@@ -23,7 +23,5 @@ public class DialogueCommand extends AbstractPlayerCommand {
     @Override
     protected void execute(@Nonnull CommandContext commandContext, @Nonnull Store<EntityStore> store, @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
         commandContext.sender().sendMessage(Message.raw("Usage: /dialogue <arg>"));
-
-        PageBuilder.pageForPlayer(playerRef).loadHtml("Pages/Dialogue.html").open(store);
     }
 }

@@ -1,8 +1,8 @@
 {
     "Group": "net.queensfall",
-    "Name": "queens_fall",
+    "Name": "dialogue",
     "Version": "0.0.1",
-    "Description": "Introduces configurable dialogue via Asset Editor, including UI.",
+    "Description": "Introduces configurable NPC Dialogue.",
     "Authors": [
         {
             "Name": "Lordimass"
@@ -12,7 +12,7 @@
         }
     ],
     "Website": "https://queensfall.net",
-    "ServerVersion": "0.5.0-pre.8",
+    "ServerVersion": "0.5.0-pre.9",
     "Dependencies": {
         "Hytale:AssetModule": "*",
         "Hytale:NPC": "*"

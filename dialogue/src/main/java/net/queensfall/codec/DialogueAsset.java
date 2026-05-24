@@ -15,7 +15,6 @@ import com.hypixel.hytale.codec.codecs.array.ArrayCodec;
 import com.hypixel.hytale.codec.schema.SchemaContext;
 import com.hypixel.hytale.codec.schema.config.Schema;
 import com.hypixel.hytale.logger.HytaleLogger;
-import com.hypixel.hytale.server.npc.instructions.ActionList;
 import lombok.Getter;
 import lombok.ToString;
 import org.bson.BsonValue;
@@ -71,12 +70,12 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
             )
             .documentation("Should the dialogue be written over time like a typewriter?")
             .add()
-//            .append(
-//                new KeyedCodec<>("Actions", BuilderCodec.builder(ActionList.class, () -> ActionList.EMPTY_ACTION_LIST).build()),
-//                (obj, val) -> obj.actions = val,
-//                obj -> obj.actions
-//            )
-//            .add()
+            .append(new KeyedCodec<>("BlockIdentifier", Codec.STRING),
+                (obj, val) -> obj.blockId = val,
+                obj -> obj.blockId
+            )
+            .documentation("A unique identifier for this specific dialogue block. If left undefined, it will default to the ID of the asset (i.e. the JSON file name).")
+            .add()
             .build();
 
     public static final AssetBuilderCodec<String, DialogueAsset> ASSET_BUILDER_CODEC =
@@ -93,8 +92,6 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
     private AssetExtraInfo.Data extraData;
     @Getter
     private DialogueType type = DialogueType.Dialogue;
-    @Getter
-    private ActionList actions;
     public String id;
     @Getter
     public DialogueEntry[] entries;
@@ -103,15 +100,15 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
     @Getter
     @Nullable
     private String title;
+    private String blockId;
 
     public boolean typewriterEffect = false;
 
-    public DialogueAsset(String id, DialogueEntry[] entries) {
-        this.id = id;
-        this.entries = entries;
+    protected DialogueAsset() {
     }
 
-    protected DialogueAsset() {
+    public String getBlockId() {
+        return blockId == null ? id : blockId;
     }
 
     public static AssetStore<String, DialogueAsset, DefaultAssetMap<String, DialogueAsset>> getAssetStore() {
