@@ -6,6 +6,7 @@
     }
   ],
   "Title": "dialogue.IntroDialogue01.name",
+  "TypewriterEffect": true,
   "Next": {
     "BlockIdentifier": "IntroDialogue02",
     "Type": "Dialogue",

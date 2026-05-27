@@ -2,6 +2,7 @@ package net.lordimass.dialogue.sensor;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.corecomponents.SensorBase;
 import com.hypixel.hytale.server.npc.role.Role;
@@ -14,6 +15,7 @@ import org.jspecify.annotations.Nullable;
 import javax.annotation.Nonnull;
 
 public class SensorDialogue extends SensorBase {
+    private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
     private final String blockId;
 
     public SensorDialogue(@NonNull BuilderSensorDialogue builder) {

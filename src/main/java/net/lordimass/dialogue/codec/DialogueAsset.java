@@ -102,7 +102,8 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
     private String title;
     private String blockId;
 
-    public boolean typewriterEffect = false;
+    @Getter
+    private boolean typewriterEffect = true;
 
     protected DialogueAsset() {
     }

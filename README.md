@@ -101,6 +101,26 @@ DialogueMod.get().registerParameter("{username}", PlayerRef.class, PlayerRef::ge
 DialogueMod.get().registerParameter("{uuid}", PlayerRef.class, p -> p.getUuid().toString());
 DialogueMod.get().registerParameter("{lang}", PlayerRef.class, PlayerRef::getLanguage);
 ```
+# Integration with NPC behaviour
+NPCs which are being interacted with include the `NPCDialogueComponent`, which describes the current state of the
+dialogue. This also comes paired with a `Dialogue` sensor which can be used to detect the current dialogue screen
+of the NPC, and adjust the NPC behaviour accordingly. For example, we could release particles when a certain dialogue is shown:
+```json
+{
+  "Sensor": {
+    "Type": "Dialogue",
+    "BlockIdentifier": "IntroDialogue02"
+  },
+  "Actions": [
+    {
+      "Type": "SpawnParticles",
+      "ParticleSystem": "Alerted",
+      "Once": true,
+      "Offset": [ 0.5, 2, 0.5 ]
+    }
+  ]
+}
+```
 
 # Example Assets
 Dialogue includes an example NPC and dialogue flow with the `Test_Dialogue` NPC role. Spawn them in your world to see 

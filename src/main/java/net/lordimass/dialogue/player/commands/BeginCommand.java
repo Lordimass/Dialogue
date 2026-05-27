@@ -29,6 +29,6 @@ public class BeginCommand extends AbstractPlayerCommand {
     protected void execute(@Nonnull CommandContext commandContext, @Nonnull Store<EntityStore> store, @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
         String dialogueId = commandContext.get(dialogArg);
         PlayerRef playerRef1 = playerArg.get(commandContext);
-        new DialoguePageManager(playerRef1, ref, DialogueAsset.getAsset(dialogueId));
+        new DialoguePageManager(playerRef1, null, DialogueAsset.getAsset(dialogueId));
     }
 }

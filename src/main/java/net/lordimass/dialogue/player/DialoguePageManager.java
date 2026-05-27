@@ -9,9 +9,11 @@ import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import lombok.Getter;
+import lombok.Setter;
 import net.lordimass.dialogue.codec.DialogueAsset;
 import net.lordimass.dialogue.codec.DialogueEntry;
 import net.lordimass.dialogue.component.NPCDialogueComponent;
+import net.lordimass.dialogue.system.TypewriterDialogueSystem;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,7 +28,13 @@ public class DialoguePageManager {
     private final PlayerRef playerRef;
     private final Ref<EntityStore> npcRef;
     private PageBuilder builder;
+    @Getter
     private HyUIPage hyUIPage;
+    @Getter
+    private String completeString;
+    @Getter
+    @Setter
+    private float typewriterDt;
     @Getter
     private DialogueAsset dialogue;
 
@@ -41,6 +49,8 @@ public class DialoguePageManager {
     private void openDialogue(DialogueAsset dialogue) {
         this.dialogue = dialogue;
         if (dialogue == null) {if (hyUIPage != null) close();  return;}
+        completeString = "";
+
         builder = PageBuilder
             .pageForPlayer(playerRef)
             .loadHtml("Pages/Dialogue.html", new TemplateProcessor())
@@ -58,6 +68,11 @@ public class DialoguePageManager {
         hyUIPage.updatePage(true);
 
         NPCDialogueComponent.update(npcRef, dialogue, playerRef);
+
+        if (dialogue.isTypewriterEffect()) {
+            TypewriterDialogueSystem.tickingPageManagers.add(this);
+            typewriterDt = 0;
+        }
     }
 
     private void populateDialogue() {
@@ -68,10 +83,12 @@ public class DialoguePageManager {
                 .append("\n");
         }
         entries.delete(entries.length()-1, entries.length());
+        completeString = entries.toString();
+        String inProgressString = dialogue.isTypewriterEffect() ? "" : completeString;
 
         builder.getTemplateProcessor()
             .setVariable("title", translateWithHYUIML(dialogue.getTitle(), playerRef))
-            .setVariable("content", entries.toString());
+            .setVariable("content", inProgressString);
         buildNEXTButton();
     }
 
@@ -111,6 +128,10 @@ public class DialoguePageManager {
 
     private void closeCallback(HyUIPage hyUIPage, Boolean aBoolean) {
         NPCDialogueComponent.clear(npcRef);
+        int index = TypewriterDialogueSystem.tickingPageManagers.indexOf(this);
+        if (index >= 0) {
+            TypewriterDialogueSystem.tickingPageManagers.remove(index);
+        }
     }
 
     public void close() {

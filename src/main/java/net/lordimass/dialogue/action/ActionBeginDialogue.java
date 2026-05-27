@@ -36,7 +36,7 @@ public class ActionBeginDialogue extends ActionBase {
             PlayerRef playerRef = store.getComponent(playerReference, PlayerRef.getComponentType());
             if (playerRef == null) return false;
 
-            new DialoguePageManager(playerRef, null, DialogueAsset.getAsset(this.dialogueId));
+            new DialoguePageManager(playerRef, ref, DialogueAsset.getAsset(this.dialogueId));
 
             super.execute(ref, role, sensorInfo, dt, store);
             return true;

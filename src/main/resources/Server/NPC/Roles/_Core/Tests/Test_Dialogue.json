@@ -15,15 +15,9 @@
   "DefaultPlayerAttitude": "Neutral",
   "Appearance": "Test_Dialogue",
   "MaxHealth": 50,
-  "DisableDamageGroups": [
-    "Self"
-  ],
-  "BusyStates": [
-    "$Interaction"
-  ],
-  "Invulnerable": {
-    "Compute": "Invulnerable"
-  },
+  "DisableDamageGroups": [ "Self" ],
+  "BusyStates": [ ],
+  "Invulnerable": { "Compute": "Invulnerable" },
   "MotionControllerList": [
     {
       "Type": "Walk",
@@ -46,42 +40,6 @@
           },
           "Instructions": [
             {
-              "$Comment": "Wave at player when they approach",
-              "ActionsBlocking": true,
-              "Sensor": {
-                "Type": "Player",
-                "Range": 8
-              },
-              "Actions": [
-                {
-                  "Type": "PlayAnimation",
-                  "Slot": "Status",
-                  "Animation": "Wave"
-                },
-                {
-                  "Type": "State",
-                  "State": "Watching"
-                }
-              ]
-            },
-            {
-              "Sensor": {
-                "Type": "Any"
-              },
-              "BodyMotion": {
-                "Type": "Nothing"
-              }
-            }
-          ]
-        },
-        {
-          "$Comment": "Watching state - player is nearby, just watch them",
-          "Sensor": {
-            "Type": "State",
-            "State": "Watching"
-          },
-          "Instructions": [
-            {
               "$Comment": "Watch nearby players with head",
               "Continue": true,
               "Sensor": {
@@ -93,78 +51,18 @@
               }
             },
             {
-              "$Comment": "Clear wave animation after delay",
-              "Continue": true,
-              "Sensor": {
-                "Type": "Any"
-              },
-              "Actions": [
-                {
-                  "Type": "Timeout",
-                  "Delay": [
-                    2,
-                    2
-                  ],
-                  "Action": {
-                    "Type": "PlayAnimation",
-                    "Slot": "Status"
-                  }
-                }
-              ]
-            },
-            {
-              "$Comment": "Return to Idle when player leaves (clear animation first)",
-              "Sensor": {
-                "Type": "Not",
-                "Sensor": {
-                  "Type": "Player",
-                  "Range": 12
-                }
-              },
-              "Actions": [
-                {
-                  "Type": "PlayAnimation",
-                  "Slot": "Status"
-                },
-                {
-                  "Type": "State",
-                  "State": "Idle"
-                }
-              ]
-            },
-            {
-              "Sensor": {
-                "Type": "Any"
-              },
-              "BodyMotion": {
-                "Type": "Nothing"
-              }
-            }
-          ]
-        },
-        {
-          "$Comment": "Interaction state - look at player while interaction is taking place",
-          "Sensor": {
-            "Type": "State",
-            "State": "$Interaction"
-          },
-          "Instructions": [
-            {
-              "Continue": true,
-              "Sensor": {
-                "Type": "Target",
-                "Range": 10
-              },
-              "HeadMotion": {
-                "Type": "Watch"
-              }
-            },
-            {
               "Sensor": {
                 "Type": "Dialogue",
                 "BlockIdentifier": "IntroDialogue02"
               },
-              "Actions": []
+              "Actions": [
+                {
+                  "Type": "SpawnParticles",
+                  "ParticleSystem": "Alerted",
+                  "Once": true,
+                  "Offset": [ 0.5, 2, 0.5 ]
+                }
+              ]
             }
           ]
         }
@@ -192,13 +90,6 @@
         },
         "Instructions": [
           {
-            "Sensor": {
-              "Type": "Not",
-              "Sensor": {
-                "Type": "State",
-                "State": "$Interaction"
-              }
-            },
             "Actions": [
               {
                 "Type": "LockOnInteractionTarget"
@@ -206,10 +97,6 @@
               {
                 "Type": "BeginDialogue",
                 "Dialogue": "IntroDialogue01"
-              },
-              {
-                "Type": "State",
-                "State": "$Interaction"
               }
             ]
           }
@@ -217,7 +104,5 @@
       }
     ]
   },
-  "NameTranslationKey": {
-    "Compute": "NameTranslationKey"
-  }
+  "NameTranslationKey": { "Compute": "NameTranslationKey" }
 }

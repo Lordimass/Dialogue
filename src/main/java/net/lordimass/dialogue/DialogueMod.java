@@ -22,6 +22,7 @@ import net.lordimass.dialogue.player.DialoguePlayer;
 import net.lordimass.dialogue.player.DialoguePlayerConfig;
 import net.lordimass.dialogue.player.commands.DialogueCommand;
 import net.lordimass.dialogue.sensor.builder.BuilderSensorDialogue;
+import net.lordimass.dialogue.system.TypewriterDialogueSystem;
 
 import java.io.File;
 import java.util.Map;
@@ -80,6 +81,11 @@ public class DialogueMod extends JavaPlugin {
 
         registerAssetTypes();
         registerEvents();
+    }
+
+    @Override
+    public void start() {
+        this.getEntityStoreRegistry().registerSystem(new TypewriterDialogueSystem());
     }
 
     public void registerAssetTypes() {
