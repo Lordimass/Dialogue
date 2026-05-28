@@ -7,21 +7,19 @@ import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.tick.DelayedEntitySystem;
 import com.hypixel.hytale.server.core.entity.entities.Player;
-import com.hypixel.hytale.server.core.entity.entities.player.pages.CustomUIPage;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import net.lordimass.dialogue.player.DialoguePageManager;
+import net.lordimass.dialogue.util.TranslationUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-
 import java.util.ArrayList;
 
-import static net.lordimass.dialogue.util.TranslationUtils.translateWithHYUIML;
-
 /**
- * Handles the typewriter effect for the player's currently open dialogue.
+ * Handles the typewriter effect for any dialogues added to its <code>tickingPageManagers</code>
+ * static list.
  */
 public class TypewriterDialogueSystem extends DelayedEntitySystem<EntityStore> {
-    private static final float CHARS_PER_SECOND = 15.0F;
+    private static final float CHARS_PER_SECOND = 25.0F;
     public static ArrayList<DialoguePageManager> tickingPageManagers = new ArrayList<>();
 
     public TypewriterDialogueSystem() {
@@ -36,19 +34,26 @@ public class TypewriterDialogueSystem extends DelayedEntitySystem<EntityStore> {
         @NonNull Store<EntityStore> store,
         @NonNull CommandBuffer<EntityStore> commandBuffer
     ) {
+        ArrayList<DialoguePageManager> newTickingPageManagers = new ArrayList<>();
         tickingPageManagers.forEach((pageManager) -> {
-            float totalDt = pageManager.getTypewriterDt() + dt;
-            pageManager.setTypewriterDt(totalDt);
-            int charCount = (int) (totalDt * CHARS_PER_SECOND);
-            String inProgressString = pageManager
-                .getCompleteString()
-                .substring(0, Math.min(charCount, pageManager.getCompleteString().length()));
+            int charCount = calculateCharCount(pageManager, dt);
+            String inProgressString = TranslationUtils.tokenedSubstring(pageManager.getDialogueTokens(), charCount);
             HyUIPage hyUIPage = pageManager.getHyUIPage();
             hyUIPage.getTemplateProcessor()
                 .setVariable("content", inProgressString);
-
             hyUIPage.updatePage(false);
+
+            if (!(inProgressString.length() == pageManager.getCompleteDialogueString().length())) {
+                newTickingPageManagers.add(pageManager);
+            }
         });
+        tickingPageManagers = (ArrayList<DialoguePageManager>) newTickingPageManagers.clone();
+    }
+
+    private static int calculateCharCount(DialoguePageManager pageManager, float dt) {
+        float totalDt = pageManager.getTypewriterDt() + dt;
+        pageManager.setTypewriterDt(totalDt);
+        return (int) (totalDt * CHARS_PER_SECOND);
     }
 
     @Override

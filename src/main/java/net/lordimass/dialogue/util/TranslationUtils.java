@@ -5,9 +5,12 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import net.lordimass.dialogue.DialogueMod;
 import net.lordimass.dialogue.parameter.ParameterContext;
 
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.stream.Collectors;
 
 public final class TranslationUtils {
+
     private TranslationUtils() {}
 
     public static Message translate(String key, PlayerRef playerRef) {
@@ -26,5 +29,63 @@ public final class TranslationUtils {
             .replaceAll("<i>(.*)</i>", "<span data-hyui-italic=true>$1</span>")
             .replaceAll("<b>(.*)</b>", "<span data-hyui-bold=true>$1</span>")
             .replaceAll("<color is=(.*)>(.*)</color>", "<span data-hyui-color=$1>$2</span>");
+    }
+
+    public static String tokenedSubstring(List<String> tokens, int end) {
+        StringBuilder sb = new StringBuilder();
+        int count = end;
+        int closingTagsNeeded = 0;
+        Queue<String> queue = new ArrayBlockingQueue<>(tokens.size());
+        queue.addAll(tokens);
+        while (!queue.isEmpty() && count > 0) {
+            String token = queue.poll();
+            if (token.charAt(0) == '<') closingTagsNeeded += token.charAt(1) == '/' ? -1 : 1;
+            else count -= 1;
+
+            sb.append(token);
+        }
+        while (!queue.isEmpty() && closingTagsNeeded != 0) {
+            String token = queue.poll();
+            if (token.charAt(0) == '<') {
+                closingTagsNeeded += token.charAt(1) == '/' ? -1 : 1;
+                sb.append(token);
+            }
+        }
+        if (closingTagsNeeded != 0) {
+            throw new RuntimeException("Missing " + closingTagsNeeded + " closing tags for string consisting of the following tokens:\n" + tokens);
+        }
+        return sb.toString();
+    }
+
+    public static List<String> tokenize(String string) {
+        ArrayList<String> tokens =  new ArrayList<>(string.length());
+
+        Queue<Character> queue = new ArrayBlockingQueue<>(string.length());
+        queue.addAll(new ArrayList<>(string.chars().mapToObj(c -> (char) c).collect(Collectors.toList())));
+        while (!queue.isEmpty()) {
+            Character c = queue.poll();
+            if (c == null) continue;
+
+            StringBuilder token = new StringBuilder().append(c);
+            if (c.equals('<')) {
+                while (!c.equals('>')) {
+                    c = queue.poll();
+                    if (c == null) {
+                        throw new RuntimeException("Angle bracket not closed in format string!");
+                    }
+                    token.append(c);
+                }
+
+            }
+
+            Character peek = queue.peek();
+            if (c.equals('\\') && peek != null && peek.equals('n')) {
+                token.append(queue.poll());
+            }
+
+            tokens.add(token.toString());
+        }
+
+        return tokens;
     }
 }

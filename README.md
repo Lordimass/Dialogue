@@ -75,6 +75,7 @@ interaction with NPCs. An example `DialogueAsset` is included below:
 | `Title`   | `"Name of Speaker"`                                                                                                                                                   | String text to add as a title to the dialogue box. Usually this will be the name of the entity speaking. Try `{username}` to include the player's name here.                                  |
 | `NextId`  | `"NextDialogueID"`                                                                                                                                                    | The ID of the next dialogue asset to open when the user clicks "Next". If this is ommitted, this will be treated as the last in the chain and the button will read "Close" instead.           |
 | `Next`    | `{"Type": "Dialogue", "Entries": [...], ...}`                                                                                                                         | The next dialogue to open when the user clicks "Next". This is used instead of `NextId` to inline dialogue objects, preventing the necessity to create separate files for every new dialogue. |
+| `TypewriterEffect` | `true`, `false` | Whether the character-by-character typing effect on a given dialogue should be enabled. Defaults to `true`.
 
 # Localisation and `.lang` Files
 Dialogue fully supports localisation of NPC dialogue, simply supply the `.lang` keys in your `DialogueAssets` and the

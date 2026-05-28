@@ -14,9 +14,12 @@ import net.lordimass.dialogue.codec.DialogueAsset;
 import net.lordimass.dialogue.codec.DialogueEntry;
 import net.lordimass.dialogue.component.NPCDialogueComponent;
 import net.lordimass.dialogue.system.TypewriterDialogueSystem;
+import net.lordimass.dialogue.util.TranslationUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static net.lordimass.dialogue.util.TranslationUtils.translateWithHYUIML;
@@ -31,7 +34,9 @@ public class DialoguePageManager {
     @Getter
     private HyUIPage hyUIPage;
     @Getter
-    private String completeString;
+    private List<String> dialogueTokens;
+    @Getter
+    private String completeDialogueString;
     @Getter
     @Setter
     private float typewriterDt;
@@ -43,13 +48,14 @@ public class DialoguePageManager {
                         ) {
         this.playerRef = playerRef;
         this.npcRef = npcRef;
+        this.dialogueTokens = new ArrayList<>();
         openDialogue(dialogue);
     }
 
     private void openDialogue(DialogueAsset dialogue) {
         this.dialogue = dialogue;
         if (dialogue == null) {if (hyUIPage != null) close();  return;}
-        completeString = "";
+        dialogueTokens.clear();
 
         builder = PageBuilder
             .pageForPlayer(playerRef)
@@ -68,11 +74,6 @@ public class DialoguePageManager {
         hyUIPage.updatePage(true);
 
         NPCDialogueComponent.update(npcRef, dialogue, playerRef);
-
-        if (dialogue.isTypewriterEffect()) {
-            TypewriterDialogueSystem.tickingPageManagers.add(this);
-            typewriterDt = 0;
-        }
     }
 
     private void populateDialogue() {
@@ -83,13 +84,19 @@ public class DialoguePageManager {
                 .append("\n");
         }
         entries.delete(entries.length()-1, entries.length());
-        completeString = entries.toString();
-        String inProgressString = dialogue.isTypewriterEffect() ? "" : completeString;
+        completeDialogueString = entries.toString();
+        dialogueTokens = TranslationUtils.tokenize(completeDialogueString);
+        String inProgressString = dialogue.isTypewriterEffect() ? "" : completeDialogueString;
 
         builder.getTemplateProcessor()
             .setVariable("title", translateWithHYUIML(dialogue.getTitle(), playerRef))
             .setVariable("content", inProgressString);
         buildNEXTButton();
+
+        if (dialogue.isTypewriterEffect()) {
+            TypewriterDialogueSystem.tickingPageManagers.add(this);
+            typewriterDt = 0;
+        }
     }
 
     private void populateChoices() {

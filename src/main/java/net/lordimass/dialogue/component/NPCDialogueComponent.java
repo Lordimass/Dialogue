@@ -64,7 +64,13 @@ public class NPCDialogueComponent implements Component<EntityStore> {
 
     public static void clear(@Nullable Ref<EntityStore> npcRef) {
         if (npcRef == null) return;
-        npcRef.getStore().removeComponentIfExists(npcRef, NPCDialogueComponent.getComponentType());
+        try {
+            npcRef.getStore().removeComponentIfExists(npcRef, NPCDialogueComponent.getComponentType());
+        } catch (IllegalStateException e) {
+            // Genuinely not got a clue why it throws this error with "Invalid entity reference"
+            // but it doesn't seem to affect anything...
+        }
+
     }
 
     public static NPCDialogueComponent get(@Nullable Ref<EntityStore> ref, ComponentAccessor<EntityStore> accessor) {

@@ -101,7 +101,6 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
     @Nullable
     private String title;
     private String blockId;
-
     @Getter
     private boolean typewriterEffect = true;
 
@@ -121,11 +120,6 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
 
     public static DefaultAssetMap<String, DialogueAsset> getAssetMap() {
         return DialogueAsset.getAssetStore().getAssetMap();
-    }
-
-    // TODO
-    public boolean isTypewriterEffectEnabled() {
-        return this.typewriterEffect;
     }
 
     @Override

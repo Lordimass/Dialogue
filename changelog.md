@@ -1,3 +1,2 @@
-- Added integration with NPC behaviour through the `NPCDialogueComponent`. See mod description/README for more 
-details on how this can be used.
-- Added mod icon
+- Added `TypewriterEffect` functionality, which is enabled by default and causes the dialogue text to appear character by character, as if it were being typed out, instead of all rendering instantaneously.
+- Fixed text formatting only being applied on the header, and not in the main dialogue body.
