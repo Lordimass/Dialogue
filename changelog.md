@@ -1,2 +1,0 @@
-- Added speech sound effects in Animalese, the "language" used in Animal Crossing speech.
-- Moved `setup()` and `start()` function contents to a new `DialogueRuntime` class which should be used when Dialogue is installed as a library.

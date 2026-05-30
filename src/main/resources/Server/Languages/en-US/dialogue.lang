@@ -4,18 +4,18 @@ npcRoles.Test_Dialogue.name = Test_Dialogue
 username.name = <color is="#2e94ad">{username}</color>
 Hans.name = <color is="#2ead58">Hans</color>
 
-IntroDialogue01.content.0 = <color is="#777777">Uh</color><color is="#999999">...</color> Do I know you?
+IntroDialogue01.content.0 = <color is="#777777">Uh</color><color is="#999999">...</color> \n Do I know you?<sound is="Voice_Effect_Question">
 
-IntroDialogue02.content.0 = Did you hit your head on a rock
+IntroDialogue02.content.0 = Did you hit your head on a rock<sound is="Voice_Effect_Shock">
 IntroDialogue02.content.1 = or do you have a screw loose?!
-IntroDialogue02.content.3 = It's me, your old pal Hans!
+IntroDialogue02.content.3 = It's me, your old pal Hans!<sound is="Voice_Effect_Exclamation">
 
 IntroDialogue03.name = <color is="#2e94ad">{username}</color>
 IntroDialogue03.content.0 = Where am I?
 IntroDialogue03.content.1 = Who are you again?
 IntroDialogue03.content.2 = Goodbye
 
-IntroDialogue03_C01.content.0 = Ah, you're in Lumbridge castle one of the most peaceful lands \n in all of Gielinor!
+IntroDialogue03_C01.content.0 = Ah, you're in Lumbridge castle one of the most peaceful lands \n in all of Gielinor!<sound is="Voice_Effect_Friendship">
 
 IntroDialogue03_C02.content.0 = Hmm... <i>You really</i> have forgotten, haven't you? Well, I'm <b>Hans</b>.
 IntroDialogue03_C02.content.1 = You and I used to be childhood friends before you went and joined the knights.\n I can't believe <i>you</i> forgot!

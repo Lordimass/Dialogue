@@ -7,6 +7,7 @@ import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.tick.DelayedEntitySystem;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.entity.entities.player.pages.PageManager;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,9 @@ import org.jspecify.annotations.Nullable;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Handles the typewriter effect for any dialogues added to its <code>tickingPageManagers</code>
@@ -25,6 +29,9 @@ import java.util.List;
  */
 public class DialogueTickingSystem extends DelayedEntitySystem<EntityStore> {
     private static final float CHARS_PER_SECOND = 16.0F;
+    private static final Set<Character> DELAY_CHARACTERS = Stream.of('.', ',', ';', '!', '?')
+        .collect(Collectors.toUnmodifiableSet());
+    private static final int DELAY_MULTIPLIER = 5;
     public static ArrayList<DialoguePageManager> tickingPageManagers = new ArrayList<>();
 
     public DialogueTickingSystem() {
@@ -43,25 +50,45 @@ public class DialogueTickingSystem extends DelayedEntitySystem<EntityStore> {
         tickingPageManagers.forEach((pageManager) -> {
             TypewriterEffectInfo info = pageManager.getTypewriterEffectInfo();
             int charCount = calculateCharCount(info, dt);
-            TranslationUtils.SubstringAndLastChar substringAndLastChar = TranslationUtils.substringFromTokens(info.getDialogueTokens(), charCount);
-            HyUIPage hyUIPage = pageManager.getHyUIPage();
-            hyUIPage.getTemplateProcessor()
-                .setVariable("content", substringAndLastChar.string());
-            hyUIPage.updatePage(false);
+            TranslationUtils.SubstringTokensResult substringTokensResult = TranslationUtils.substringFromTokens(info.getDialogueTokens(), charCount);
 
-            info.getVoiceHandler().play(substringAndLastChar.lastChar());
+            updateGui(pageManager, substringTokensResult);
 
-            if (!(substringAndLastChar.string().length() == info.getCompleteDialogueString().length())) {
+            if (DELAY_CHARACTERS.contains(substringTokensResult.lastChar())
+                || substringTokensResult.soundEvent() != null
+            ) info.delayNext = true;
+
+            playSounds(substringTokensResult, pageManager);
+
+            info.lastLength = substringTokensResult.string().length();
+            if (!substringTokensResult.complete()) {
                 newTickingPageManagers.add(pageManager);
             }
         });
-        tickingPageManagers = (ArrayList<DialoguePageManager>) newTickingPageManagers.clone();
+        tickingPageManagers = new ArrayList<>(newTickingPageManagers);
     }
 
     private static int calculateCharCount(TypewriterEffectInfo info, float dt) {
-        float totalDt = info.getTypewriterDt() + dt;
+        float totalDt = info.getTypewriterDt() + (info.delayNext ? 0.1F*dt : dt);
         info.setTypewriterDt(totalDt);
+        info.delayNext = false;
         return (int) (totalDt * CHARS_PER_SECOND);
+    }
+
+    private static void updateGui(DialoguePageManager pageManager, TranslationUtils.SubstringTokensResult substringTokensResult) {
+        HyUIPage hyUIPage = pageManager.getHyUIPage();
+        hyUIPage.getTemplateProcessor()
+            .setVariable("content", substringTokensResult.string());
+        hyUIPage.updatePage(false);
+    }
+
+    private static void playSounds(TranslationUtils.SubstringTokensResult substringTokensResult, DialoguePageManager pageManager) {
+        if (substringTokensResult.soundEvent() != null) {
+            VoiceHandler.play(substringTokensResult.soundEvent(), pageManager.getPlayerRef());
+        }
+        if (pageManager.getTypewriterEffectInfo().lastLength != substringTokensResult.string().length()) {
+            pageManager.getTypewriterEffectInfo().getVoiceHandler().play(substringTokensResult.lastChar());
+        }
     }
 
     @Override
@@ -81,6 +108,8 @@ public class DialogueTickingSystem extends DelayedEntitySystem<EntityStore> {
         private float typewriterDt;
         @Getter
         private final VoiceHandler voiceHandler;
+        protected boolean delayNext;
+        protected int lastLength = 0;
 
         public TypewriterEffectInfo(@Nonnull String completeDialogueString, @Nonnull DialoguePageManager pageManager) {
             this.dialogueTokens = TranslationUtils.tokenize(completeDialogueString);
@@ -91,6 +120,8 @@ public class DialogueTickingSystem extends DelayedEntitySystem<EntityStore> {
         public void reset() {
             this.dialogueTokens.clear();
             this.typewriterDt = 0;
+            this.delayNext = false;
+            this.lastLength = 0;
         }
     }
 }

@@ -1,5 +1,5 @@
 # Dialogue
-[![Hytale](https://img.shields.io/badge/Hytale-Release/0.5.0--pre8-green)]()
+[![Hytale](https://img.shields.io/badge/Hytale-Release/0.5.3-green)]()
 ![CurseForge](https://img.shields.io/badge/CurseForge-3b3d42?logo=curseforge&link=https%3A%2F%2Fwww.curseforge.com%2Fhytale%2Fmods%2Fdialogue)
 [![Java](https://img.shields.io/badge/Java-25-orange)]()
 

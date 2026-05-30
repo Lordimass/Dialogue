@@ -3,7 +3,6 @@ package net.lordimass.dialogue.util;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import net.lordimass.dialogue.DialogueMod;
-import net.lordimass.dialogue.DialogueRuntime;
 import net.lordimass.dialogue.parameter.ParameterContext;
 
 import java.util.*;
@@ -32,20 +31,34 @@ public final class TranslationUtils {
             .replace("<b>", "<span data-hyui-bold=true>")
             .replace("</b>", "</span>")
             .replaceAll("<color is=(.*?)>", "<span data-hyui-color=$1>")
-            .replace("</color>", "</span>");
+            .replace("</color>", "</span>")
+            .replace("</sound>", ""); // Closing </sound> tags are redundant.
     }
 
-    public static SubstringAndLastChar substringFromTokens(List<String> tokens, int end) {
+    /**
+     * This method is horrific and I apologise profusely for my crimes.
+     */
+    public static SubstringTokensResult substringFromTokens(List<String> tokens, int end) {
         StringBuilder sb = new StringBuilder();
         char lastChar = 0;
+        String soundEvent = null;
         int count = end;
         int closingTagsNeeded = 0;
         Queue<String> queue = new ArrayBlockingQueue<>(tokens.size());
         queue.addAll(tokens);
         while (!queue.isEmpty() && count > 0) {
             String token = queue.poll();
-            if (token.charAt(0) == '<') closingTagsNeeded += token.charAt(1) == '/' ? -1 : 1;
+            if (token.charAt(0) == '<') {
+                // Handle special "<sound>" tag.
+                if (token.matches("<sound is=\"(.*?)\">")) {
+                    // TODO: Sound event not making it through when in the middle of a string.
+                    soundEvent = token.replaceAll("<sound is=\"(.*?)\">", "$1");
+                    continue;
+                }
+                closingTagsNeeded += token.charAt(1) == '/' ? -1 : 1;
+            }
             else {
+                soundEvent = null;
                 count -= 1;
                 lastChar = token.charAt(0);
             }
@@ -62,7 +75,7 @@ public final class TranslationUtils {
         if (closingTagsNeeded != 0) {
             throw new RuntimeException("Missing " + closingTagsNeeded + " closing tags for string consisting of the following tokens:\n" + tokens);
         }
-        return new SubstringAndLastChar(sb.toString(), lastChar);
+        return new SubstringTokensResult(sb.toString(), lastChar, soundEvent, queue.isEmpty());
     }
 
     public static List<String> tokenize(String string) {
@@ -96,5 +109,10 @@ public final class TranslationUtils {
         return tokens;
     }
 
-    public record SubstringAndLastChar(String string, char lastChar) {}
+    public record SubstringTokensResult(
+        String string,
+        char lastChar,
+        String soundEvent,
+        boolean complete
+    ) {}
 }

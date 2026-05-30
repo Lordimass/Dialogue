@@ -21,7 +21,17 @@ public class VoiceHandler {
                 "_Voice_" +
                 Character.toUpperCase(c)
         );
+        if (soundIndex == Integer.MIN_VALUE) {
+            soundIndex = SoundEvent.getAssetMap()
+                .getIndex("Voice_" + Character.toUpperCase(c));
+        }
+
 
         SoundUtil.playSoundEvent2dToPlayer(playerRef, soundIndex, SoundCategory.SFX);
+    }
+
+    public static void play(String soundEventId, PlayerRef playerRef) {
+        int id = SoundEvent.getAssetMap().getIndex(soundEventId);
+        SoundUtil.playSoundEvent2dToPlayer(playerRef, id, SoundCategory.SFX);
     }
 }
