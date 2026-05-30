@@ -129,5 +129,6 @@ how it all works.
 ![](images/Test_Dialogue.png)
 
 # Credits
-Parts of this plugin have been adapted from [Hyspeech](https://github.com/Naughty-Klaus/Hyspeech/tree/master) by
-[NaughtyKlaus](https://github.com/Naughty-Klaus).
+- Parts of this plugin have been adapted from [Hyspeech](https://github.com/Naughty-Klaus/Hyspeech/tree/master) by [NaughtyKlaus](https://github.com/Naughty-Klaus).
+- Inspiration for Animalese voices from [BubbleChat](https://www.curseforge.com/hytale/mods/bubblechat) by [BeyondSmash](https://www.curseforge.com/members/beyondsmash).
+- Built-in Animalese voice files from [animalese-typing-desktop](https://github.com/joshxviii/animalese-typing-desktop) by [joshxviii](https://github.com/joshxviii)

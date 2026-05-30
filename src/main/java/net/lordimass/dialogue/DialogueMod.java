@@ -22,7 +22,7 @@ import net.lordimass.dialogue.player.DialoguePlayer;
 import net.lordimass.dialogue.player.DialoguePlayerConfig;
 import net.lordimass.dialogue.player.commands.DialogueCommand;
 import net.lordimass.dialogue.sensor.builder.BuilderSensorDialogue;
-import net.lordimass.dialogue.system.TypewriterDialogueSystem;
+import net.lordimass.dialogue.system.DialogueTickingSystem;
 
 import java.io.File;
 import java.util.Map;
@@ -33,6 +33,7 @@ public class DialogueMod extends JavaPlugin {
     public static final Map<PlayerRef, DialoguePlayer> dialoguePlayerMap = new ConcurrentHashMap<>();
     private static DialogueMod INSTANCE;
     private final Map<String, ParameterProcessor<?>> processors = new ConcurrentHashMap<>();
+    public static final String[] BUILTIN_VOICE_IDS = new String[]{"F1", "F2", "F3", "F4", "M1", "M2", "M3", "M4"};
 
     @Getter
     private static ComponentType<EntityStore, NPCDialogueComponent> dialogueComponentType;
@@ -85,7 +86,7 @@ public class DialogueMod extends JavaPlugin {
 
     @Override
     public void start() {
-        this.getEntityStoreRegistry().registerSystem(new TypewriterDialogueSystem());
+        this.getEntityStoreRegistry().registerSystem(new DialogueTickingSystem());
     }
 
     public void registerAssetTypes() {

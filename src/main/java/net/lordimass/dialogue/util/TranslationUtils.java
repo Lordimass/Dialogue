@@ -31,8 +31,9 @@ public final class TranslationUtils {
             .replaceAll("<color is=(.*)>(.*)</color>", "<span data-hyui-color=$1>$2</span>");
     }
 
-    public static String tokenedSubstring(List<String> tokens, int end) {
+    public static SubstringAndLastChar substringFromTokens(List<String> tokens, int end) {
         StringBuilder sb = new StringBuilder();
+        char lastChar = 0;
         int count = end;
         int closingTagsNeeded = 0;
         Queue<String> queue = new ArrayBlockingQueue<>(tokens.size());
@@ -40,7 +41,10 @@ public final class TranslationUtils {
         while (!queue.isEmpty() && count > 0) {
             String token = queue.poll();
             if (token.charAt(0) == '<') closingTagsNeeded += token.charAt(1) == '/' ? -1 : 1;
-            else count -= 1;
+            else {
+                count -= 1;
+                lastChar = token.charAt(0);
+            }
 
             sb.append(token);
         }
@@ -54,7 +58,7 @@ public final class TranslationUtils {
         if (closingTagsNeeded != 0) {
             throw new RuntimeException("Missing " + closingTagsNeeded + " closing tags for string consisting of the following tokens:\n" + tokens);
         }
-        return sb.toString();
+        return new SubstringAndLastChar(sb.toString(), lastChar);
     }
 
     public static List<String> tokenize(String string) {
@@ -75,7 +79,6 @@ public final class TranslationUtils {
                     }
                     token.append(c);
                 }
-
             }
 
             Character peek = queue.peek();
@@ -88,4 +91,6 @@ public final class TranslationUtils {
 
         return tokens;
     }
+
+    public record SubstringAndLastChar(String string, char lastChar) {}
 }

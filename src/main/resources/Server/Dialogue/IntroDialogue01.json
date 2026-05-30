@@ -5,11 +5,11 @@
       "Content": "dialogue.IntroDialogue01.content.0"
     }
   ],
-  "Title": "dialogue.IntroDialogue01.name",
+  "Title": "dialogue.username.name",
   "Next": {
     "BlockIdentifier": "IntroDialogue02",
     "Type": "Dialogue",
-    "Title": "dialogue.IntroDialogue02.name",
+    "Title": "dialogue.Hans.name",
     "Entries": [
       {
         "Content": "dialogue.IntroDialogue02.content.0"
@@ -21,7 +21,6 @@
         "Content": "dialogue.IntroDialogue02.content.3"
       }
     ],
-    "TypewriterEffect": false,
     "NextId": "IntroDialogue03"
   }
 }

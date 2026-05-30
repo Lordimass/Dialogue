@@ -1,13 +1,13 @@
 {
   "Type": "Choice",
-  "Title": "dialogue.IntroDialogue03.name",
+  "Title": "dialogue.username.name",
   "Entries": [
     {
       "Content": "dialogue.IntroDialogue03.content.0",
       "Next": {
         "BlockIdentifier": "IntroDialogue03_C01",
         "Type": "Dialogue",
-        "Title": "dialogue.IntroDialogue03_C01.name",
+        "Title": "dialogue.Hans.name",
         "Entries": [
           {
             "Content": "dialogue.IntroDialogue03_C01.content.0"

@@ -1,9 +1,19 @@
 {
   "Type": "Dialogue",
-  "Title": "dialogue.IntroDialogue03_C02.name",
+  "Title": "dialogue.Hans.name",
+  "Voice": "M4",
   "Entries": [
     {
       "Content": "dialogue.IntroDialogue03_C02.content.0"
     }
-  ]
+  ],
+  "Next": {
+    "Type": "Dialogue",
+    "Title": "dialogue.Hans.name",
+    "Entries": [
+      {
+        "Content": "dialogue.IntroDialogue03_C02.content.1"
+      }
+    ]
+  }
 }

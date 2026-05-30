@@ -17,6 +17,7 @@ import com.hypixel.hytale.codec.schema.config.Schema;
 import com.hypixel.hytale.logger.HytaleLogger;
 import lombok.Getter;
 import lombok.ToString;
+import net.lordimass.dialogue.DialogueMod;
 import org.bson.BsonValue;
 import org.jspecify.annotations.NonNull;
 import javax.annotation.Nullable;
@@ -62,7 +63,8 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
                 (asset, s) -> asset.next = s,
                 asset -> asset.next
             )
-            .documentation("The next dialogue to open after this one. Use `NextId` instead to reference a separate dialogue asset instead of inlining it here.")
+            .documentation("The next dialogue to open after this one. Use `NextId` instead to " +
+                "reference a separate dialogue asset instead of inlining it here.")
             .add()
             .append(new KeyedCodec<>("TypewriterEffect", Codec.BOOLEAN),
                 (obj, val) -> obj.typewriterEffect = val,
@@ -74,7 +76,17 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
                 (obj, val) -> obj.blockId = val,
                 obj -> obj.blockId
             )
-            .documentation("A unique identifier for this specific dialogue block. If left undefined, it will default to the ID of the asset (i.e. the JSON file name).")
+            .documentation("A unique identifier for this specific dialogue block. If left " +
+                "undefined, it will default to the ID of the asset (i.e. the JSON file name).")
+            .add()
+            .append(new KeyedCodec<>("Voice", Codec.STRING),
+                (obj, val) -> obj.voice = val,
+                obj -> obj.voice
+            )
+            .documentation("The ID of the voice to use for this Dialogue. If undefined, it will " +
+                "choose a voice based on the title of the dialogue, so dialogues with the same " +
+                "title will always have the same voice. Set to the empty string to disable voice." +
+                "This only works if TypewriterEffect has not been disabled.")
             .add()
             .build();
 
@@ -92,6 +104,7 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
     private AssetExtraInfo.Data extraData;
     @Getter
     private DialogueType type = DialogueType.Dialogue;
+    @Getter
     public String id;
     @Getter
     public DialogueEntry[] entries;
@@ -103,6 +116,7 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
     private String blockId;
     @Getter
     private boolean typewriterEffect = true;
+    private String voice;
 
     protected DialogueAsset() {
     }
@@ -112,19 +126,12 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
     }
 
     public static AssetStore<String, DialogueAsset, DefaultAssetMap<String, DialogueAsset>> getAssetStore() {
-        if (ASSET_STORE == null) {
-            ASSET_STORE = AssetRegistry.getAssetStore(DialogueAsset.class);
-        }
+        if (ASSET_STORE == null) ASSET_STORE = AssetRegistry.getAssetStore(DialogueAsset.class);
         return ASSET_STORE;
     }
 
     public static DefaultAssetMap<String, DialogueAsset> getAssetMap() {
         return DialogueAsset.getAssetStore().getAssetMap();
-    }
-
-    @Override
-    public String getId() {
-        return this.id;
     }
 
     @Nullable
@@ -147,7 +154,28 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
         return null;
     }
 
-    /* Lazy DialogueAsset.CODEC work around so that the codec can be self-referential. */
+    /**
+     * Get the voice to use for this dialogue.
+     * <br><br>
+     * If voice was set to the empty string in the JSON asset we return null, signifying that voice
+     * functionality should be disabled.
+     * <br><br>
+     * If voice was not provided, we'll deterministically choose from one of the built-in voices
+     * based on <code>this.title</code>
+     */
+    @Nullable
+    public String getVoice() {
+        if (voice != null) return voice.isEmpty() ? null : voice;
+        if (this.title == null) return DialogueMod.BUILTIN_VOICE_IDS[0];
+        int value = 0;
+        for (char c : this.title.toCharArray()) {
+            value += Character.getNumericValue(c);
+        }
+        voice = DialogueMod.BUILTIN_VOICE_IDS[value % DialogueMod.BUILTIN_VOICE_IDS.length];
+        return voice;
+    }
+
+    /** Lazy DialogueAsset.CODEC work around so that the codec can be self-referential. */
     public static class LazyCodec implements Codec<DialogueAsset> {
         public @NonNull Schema toSchema(@NonNull SchemaContext schemaContext) {return DialogueAsset.CODEC.toSchema(schemaContext);}
         public @Nullable DialogueAsset decode(BsonValue bsonValue, ExtraInfo extraInfo) {return DialogueAsset.CODEC.decode(bsonValue, extraInfo);}
