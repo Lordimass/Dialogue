@@ -1,2 +1,2 @@
-- Added `TypewriterEffect` functionality, which is enabled by default and causes the dialogue text to appear character by character, as if it were being typed out, instead of all rendering instantaneously.
-- Fixed text formatting only being applied on the header, and not in the main dialogue body.
+- Added speech sound effects in Animalese, the "language" used in Animal Crossing speech.
+- Moved `setup()` and `start()` function contents to a new `DialogueRuntime` class which should be used when Dialogue is installed as a library.
