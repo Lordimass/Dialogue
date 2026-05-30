@@ -12,6 +12,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import lombok.Getter;
 import lombok.Setter;
 import net.lordimass.dialogue.DialogueMod;
+import net.lordimass.dialogue.DialogueRuntime;
 import net.lordimass.dialogue.codec.DialogueAsset;
 import org.jspecify.annotations.Nullable;
 

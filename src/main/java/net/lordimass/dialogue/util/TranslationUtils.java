@@ -3,6 +3,7 @@ package net.lordimass.dialogue.util;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import net.lordimass.dialogue.DialogueMod;
+import net.lordimass.dialogue.DialogueRuntime;
 import net.lordimass.dialogue.parameter.ParameterContext;
 
 import java.util.*;
@@ -19,7 +20,7 @@ public final class TranslationUtils {
         ctx.put(DialogueMod.class, DialogueMod.get());
 
         Message message = Message.translation(key);
-        message = Message.translation(DialogueMod.get().process(message.getAnsiMessage(), ctx));
+        message = Message.translation(DialogueMod.process(message.getAnsiMessage(), ctx));
 
         return message;
     }

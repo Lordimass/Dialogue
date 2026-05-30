@@ -18,12 +18,12 @@ SOUND_EVENT_TEMPLATE = {
                 "MaxPitch": 0,
                 "MinVolume": 0
             },
-            "Volume": 1.0
+            "Volume": -5
         }
     ],
-    "Volume": 0,
-    "MaxDistance": 70,
-    "StartAttenuationDistance": 25
+    "Volume": -5,
+    "MaxDistance": 20,
+    "StartAttenuationDistance": 1
 }
 
 if __name__ == "__main__":

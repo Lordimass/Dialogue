@@ -3,6 +3,7 @@ plugins {
     java
     alias(libs.plugins.hytaleTools)
     alias(libs.plugins.hytalePublisher)
+    id("com.gradleup.shadow") version "8.3.6"
 }
 
 // Plugin versions are sourced from gradle/libs.versions.toml.
@@ -70,6 +71,55 @@ hytalePublisher {
         enabled = true
         projectId = property("curseforge_project_id").toString()
 
-        required("hyui")
+        optional("hyui")
+    }
+}
+
+tasks {
+    shadowJar {
+        archiveClassifier.set("")
+
+        // Clean up manifest
+        manifest {
+            attributes(
+                "Implementation-Title" to project.name,
+                "Implementation-Version" to project.version,
+                "Multi-Release" to "true"
+            )
+        }
+
+        // Include asset pack at JAR root level.
+        // Hytale's asset loader expects Server/ and Common/ at the JAR root
+        // when IncludesAssetPack is true in manifest.json.
+        // Without this, assets end up nested under hytale-assets/ which Hytale ignores.
+        // Exclude the asset pack's own manifest.json — our plugin manifest at root already
+        // declares IncludesAssetPack:true, and the asset pack manifest would overwrite it
+        // (replacing the Main class entry, causing a classloader NPE on startup).
+        from("src/main/resources/hytale-assets") {
+            exclude("manifest.json")
+        }
+
+        // Remove the nested hytale-assets/ copy from the JAR (assets are at root now).
+        // The nested copy still exists in build/resources/main/ for deploy.sh compatibility.
+        exclude("hytale-assets/**")
+
+        // Exclude signature files (cause issues)
+        exclude("META-INF/*.SF")
+        exclude("META-INF/*.DSA")
+        exclude("META-INF/*.RSA")
+        exclude("META-INF/LICENSE*")
+        exclude("META-INF/NOTICE*")
+
+        // NOTE: Relocation disabled - Shadow plugin's ASM doesn't support Java 25 bytecode
+        // SnakeYAML is bundled without relocation. If conflicts occur with other plugins,
+        // consider using a different config library or waiting for Shadow plugin update.
+    }
+
+    build {
+        dependsOn(shadowJar)
+    }
+
+    jar {
+        enabled = false // Only use shadowJar
     }
 }

@@ -1,42 +1,26 @@
 package net.lordimass.dialogue;
 
-import com.hypixel.hytale.assetstore.map.DefaultAssetMap;
 import com.hypixel.hytale.component.ComponentType;
-import com.hypixel.hytale.server.core.asset.HytaleAssetStore;
-import com.hypixel.hytale.server.core.event.events.player.PlayerConnectEvent;
-import com.hypixel.hytale.server.core.event.events.player.PlayerDisconnectEvent;
-import com.hypixel.hytale.server.core.modules.interaction.interaction.config.Interaction;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
-import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import com.hypixel.hytale.server.npc.NPCPlugin;
 import lombok.Getter;
-import net.lordimass.dialogue.action.builder.BuilderActionBeginDialogue;
-import net.lordimass.dialogue.codec.DialogueAsset;
 import net.lordimass.dialogue.component.NPCDialogueComponent;
 import net.lordimass.dialogue.parameter.ParameterContext;
 import net.lordimass.dialogue.parameter.ParameterProcessor;
 import net.lordimass.dialogue.parameter.ParameterResolver;
-import net.lordimass.dialogue.player.DialoguePlayer;
-import net.lordimass.dialogue.player.DialoguePlayerConfig;
-import net.lordimass.dialogue.player.commands.DialogueCommand;
-import net.lordimass.dialogue.sensor.builder.BuilderSensorDialogue;
-import net.lordimass.dialogue.system.DialogueTickingSystem;
 
-import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DialogueMod extends JavaPlugin {
 
-    public static final Map<PlayerRef, DialoguePlayer> dialoguePlayerMap = new ConcurrentHashMap<>();
+public class DialogueMod extends JavaPlugin {
     private static DialogueMod INSTANCE;
-    private final Map<String, ParameterProcessor<?>> processors = new ConcurrentHashMap<>();
     public static final String[] BUILTIN_VOICE_IDS = new String[]{"F1", "F2", "F3", "F4", "M1", "M2", "M3", "M4"};
+    protected static final Map<String, ParameterProcessor<?>> processors = new ConcurrentHashMap<>();
 
     @Getter
-    private static ComponentType<EntityStore, NPCDialogueComponent> dialogueComponentType;
+    protected static ComponentType<EntityStore, NPCDialogueComponent> dialogueComponentType;
 
     public DialogueMod(JavaPluginInit init) {
         super(init);
@@ -47,7 +31,7 @@ public class DialogueMod extends JavaPlugin {
         return DialogueMod.INSTANCE;
     }
 
-    public <C> void registerParameter(
+    public static <C> void registerParameter(
         String key,
         Class<C> contextType,
         ParameterResolver<C> resolver
@@ -55,8 +39,8 @@ public class DialogueMod extends JavaPlugin {
         processors.put(key, new ParameterProcessor<>(key, contextType, resolver));
     }
 
-    public String process(String message, ParameterContext ctx) {
-        for (ParameterProcessor<?> processor : processors.values()) {
+    public static String process(String message, ParameterContext ctx) {
+        for (ParameterProcessor<?> processor : DialogueMod.processors.values()) {
             if (processor.supports(ctx)) {
                 message = message.replace(
                     processor.key(),
@@ -69,76 +53,11 @@ public class DialogueMod extends JavaPlugin {
 
     @Override
     public void setup() {
-        DialogueMod.get().registerParameter("{username}", PlayerRef.class, PlayerRef::getUsername);
-        DialogueMod.get().registerParameter("{uuid}", PlayerRef.class, p -> p.getUuid().toString());
-        DialogueMod.get().registerParameter("{lang}", PlayerRef.class, PlayerRef::getLanguage);
-
-        dialogueComponentType = this.getEntityStoreRegistry().registerComponent(NPCDialogueComponent.class, NPCDialogueComponent::new);
-
-        this.getCommandRegistry().registerCommand(new DialogueCommand());
-
-        NPCPlugin.get().registerCoreComponentType("Dialogue", BuilderSensorDialogue::new);
-        NPCPlugin.get().registerCoreComponentType("BeginDialogue", BuilderActionBeginDialogue::new);
-
-        registerAssetTypes();
-        registerEvents();
+        DialogueRuntime.setup(this);
     }
 
     @Override
     public void start() {
-        this.getEntityStoreRegistry().registerSystem(new DialogueTickingSystem());
-    }
-
-    public void registerAssetTypes() {
-        HytaleAssetStore.Builder<String, DialogueAsset, DefaultAssetMap<String, DialogueAsset>> dialogAssetBuilder =
-            HytaleAssetStore.builder(
-                DialogueAsset.class,
-                new DefaultAssetMap<>()
-            );
-
-        this.getAssetRegistry().register(
-            dialogAssetBuilder
-                .setPath("Dialogue")
-                .setCodec(DialogueAsset.ASSET_BUILDER_CODEC)
-                .setKeyFunction(DialogueAsset::getId)
-                .loadsAfter(Interaction.class)
-                .build()
-        );
-    }
-
-    public void registerEvents() {
-        this.getEventRegistry().register(
-            PlayerConnectEvent.class,
-            playerConnectEvent ->
-                dialoguePlayerMap.putIfAbsent(
-                    playerConnectEvent.getPlayerRef(),
-                    new DialoguePlayer(playerConnectEvent.getPlayerRef())
-                )
-        );
-
-        this.getEventRegistry().register(
-            PlayerDisconnectEvent.class,
-            playerDisconnectEvent -> {
-                DialoguePlayer player = dialoguePlayerMap.get(playerDisconnectEvent.getPlayerRef());
-
-                com.hypixel.hytale.server.core.util.Config<DialoguePlayerConfig> cfg = new com.hypixel.hytale.server.core.util.Config<>(
-                    new File("config/dialogue/player_data/").toPath(),
-                    playerDisconnectEvent.getPlayerRef().getUsername(),
-                    DialoguePlayerConfig.CODEC
-                );
-
-                cfg.load()
-                    .thenAccept((_cfg) -> _cfg.setUuid(
-                        player.getConfig().get().playerUuid)
-                    )
-                    .thenAccept(
-                        (_) -> cfg.save().thenAccept(
-                                (_) -> dialoguePlayerMap.remove(
-                                    playerDisconnectEvent.getPlayerRef()
-                                )
-                            )
-                );
-            }
-        );
+        DialogueRuntime.start(this);
     }
 }
