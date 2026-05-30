@@ -27,9 +27,12 @@ public final class TranslationUtils {
 
     public static String translateWithHYUIML(String key, PlayerRef playerRef) {
         return Objects.requireNonNull(translate(key, playerRef).getMessageId())
-            .replaceAll("<i>(.*)</i>", "<span data-hyui-italic=true>$1</span>")
-            .replaceAll("<b>(.*)</b>", "<span data-hyui-bold=true>$1</span>")
-            .replaceAll("<color is=(.*)>(.*)</color>", "<span data-hyui-color=$1>$2</span>");
+            .replace("<i>", "<span data-hyui-italic=true>")
+            .replace("</i>", "</span>")
+            .replace("<b>", "<span data-hyui-bold=true>")
+            .replace("</b>", "</span>")
+            .replaceAll("<color is=(.*?)>", "<span data-hyui-color=$1>")
+            .replace("</color>", "</span>");
     }
 
     public static SubstringAndLastChar substringFromTokens(List<String> tokens, int end) {

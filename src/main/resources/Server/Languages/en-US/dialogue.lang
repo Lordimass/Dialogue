@@ -4,7 +4,7 @@ npcRoles.Test_Dialogue.name = Test_Dialogue
 username.name = <color is="#2e94ad">{username}</color>
 Hans.name = <color is="#2ead58">Hans</color>
 
-IntroDialogue01.content.0 = Uh...\n Do I know you?
+IntroDialogue01.content.0 = <color is="#777777">Uh</color><color is="#999999">...</color> Do I know you?
 
 IntroDialogue02.content.0 = Did you hit your head on a rock
 IntroDialogue02.content.1 = or do you have a screw loose?!
