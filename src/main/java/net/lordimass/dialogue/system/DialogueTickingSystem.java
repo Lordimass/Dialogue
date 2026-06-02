@@ -12,6 +12,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import lombok.Getter;
 import lombok.Setter;
 import net.lordimass.dialogue.player.DialoguePageManager;
+import net.lordimass.dialogue.util.TokenString;
 import net.lordimass.dialogue.util.TranslationUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -23,6 +24,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static net.lordimass.dialogue.util.TokenString.SOUND_TAG_REGEX;
+
 /**
  * Handles the typewriter effect for any dialogues added to its <code>tickingPageManagers</code>
  * static list.
@@ -31,7 +34,6 @@ public class DialogueTickingSystem extends DelayedEntitySystem<EntityStore> {
     private static final float CHARS_PER_SECOND = 16.0F;
     private static final Set<Character> DELAY_CHARACTERS = Stream.of('.', ',', ';', '!', '?')
         .collect(Collectors.toUnmodifiableSet());
-    private static final int DELAY_MULTIPLIER = 5;
     public static ArrayList<DialoguePageManager> tickingPageManagers = new ArrayList<>();
 
     public DialogueTickingSystem() {
@@ -49,45 +51,36 @@ public class DialogueTickingSystem extends DelayedEntitySystem<EntityStore> {
         ArrayList<DialoguePageManager> newTickingPageManagers = new ArrayList<>();
         tickingPageManagers.forEach((pageManager) -> {
             TypewriterEffectInfo info = pageManager.getTypewriterEffectInfo();
-            int charCount = calculateCharCount(info, dt);
-            TranslationUtils.SubstringTokensResult substringTokensResult = TranslationUtils.substringFromTokens(info.getDialogueTokens(), charCount);
+            TokenString tokenString = info.getTokenString();
+            String nextToken = tokenString.next();
+            if (nextToken == null) return;
 
-            updateGui(pageManager, substringTokensResult);
+            updateGui(pageManager, tokenString.getInProgressString());
+            // charAt 0 is usually the only character in the token at this stage.
+            String soundEvent = nextToken.matches(SOUND_TAG_REGEX) ? nextToken.replaceAll(SOUND_TAG_REGEX, "$1") : null;
+            if (DELAY_CHARACTERS.contains(nextToken.charAt(0)) || soundEvent != null) info.delayNext = true;
 
-            if (DELAY_CHARACTERS.contains(substringTokensResult.lastChar())
-                || substringTokensResult.soundEvent() != null
-            ) info.delayNext = true;
+            playSounds(pageManager, nextToken, soundEvent);
 
-            playSounds(substringTokensResult, pageManager);
-
-            info.lastLength = substringTokensResult.string().length();
-            if (!substringTokensResult.complete()) {
+            if (!tokenString.isComplete()) {
                 newTickingPageManagers.add(pageManager);
             }
         });
         tickingPageManagers = new ArrayList<>(newTickingPageManagers);
     }
 
-    private static int calculateCharCount(TypewriterEffectInfo info, float dt) {
-        float totalDt = info.getTypewriterDt() + (info.delayNext ? 0.1F*dt : dt);
-        info.setTypewriterDt(totalDt);
-        info.delayNext = false;
-        return (int) (totalDt * CHARS_PER_SECOND);
-    }
-
-    private static void updateGui(DialoguePageManager pageManager, TranslationUtils.SubstringTokensResult substringTokensResult) {
+    private static void updateGui(DialoguePageManager pageManager, String content) {
         HyUIPage hyUIPage = pageManager.getHyUIPage();
         hyUIPage.getTemplateProcessor()
-            .setVariable("content", substringTokensResult.string());
+            .setVariable("content", content);
         hyUIPage.updatePage(false);
     }
 
-    private static void playSounds(TranslationUtils.SubstringTokensResult substringTokensResult, DialoguePageManager pageManager) {
-        if (substringTokensResult.soundEvent() != null) {
-            VoiceHandler.play(substringTokensResult.soundEvent(), pageManager.getPlayerRef());
-        }
-        if (pageManager.getTypewriterEffectInfo().lastLength != substringTokensResult.string().length()) {
-            pageManager.getTypewriterEffectInfo().getVoiceHandler().play(substringTokensResult.lastChar());
+    private static void playSounds(DialoguePageManager pageManager, String token, @Nullable String soundEvent) {
+        if (soundEvent != null) {
+            VoiceHandler.play(soundEvent, pageManager.getPlayerRef());
+        } else {
+            pageManager.getTypewriterEffectInfo().getVoiceHandler().play(token.charAt(0));
         }
     }
 
@@ -98,30 +91,14 @@ public class DialogueTickingSystem extends DelayedEntitySystem<EntityStore> {
 
     public static class TypewriterEffectInfo {
         @Getter
-        @Nonnull
-        private final List<String> dialogueTokens;
-        @Getter
-        @Nonnull
-        private final String completeDialogueString;
-        @Getter
-        @Setter
-        private float typewriterDt;
+        TokenString tokenString;
         @Getter
         private final VoiceHandler voiceHandler;
         protected boolean delayNext;
-        protected int lastLength = 0;
 
         public TypewriterEffectInfo(@Nonnull String completeDialogueString, @Nonnull DialoguePageManager pageManager) {
-            this.dialogueTokens = TranslationUtils.tokenize(completeDialogueString);
-            this.completeDialogueString = completeDialogueString;
+            this.tokenString = new TokenString(completeDialogueString);
             this.voiceHandler = new VoiceHandler(pageManager.getDialogue(), pageManager.getPlayerRef());
-        }
-
-        public void reset() {
-            this.dialogueTokens.clear();
-            this.typewriterDt = 0;
-            this.delayNext = false;
-            this.lastLength = 0;
         }
     }
 }

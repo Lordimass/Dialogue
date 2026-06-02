@@ -1,5 +1,6 @@
 package net.lordimass.dialogue;
 
+import com.creditor.Creditor;
 import com.hypixel.hytale.assetstore.map.DefaultAssetMap;
 import com.hypixel.hytale.server.core.asset.HytaleAssetStore;
 import com.hypixel.hytale.server.core.event.events.player.PlayerConnectEvent;
@@ -56,12 +57,14 @@ public class DialogueRuntime {
 
         registerAssetTypes(host);
         registerEvents(host);
+        Creditor.setup(host);
         isSetupDone = true;
     }
 
     public static void start(JavaPlugin host) {
         if (isStartDone) return;
         host.getEntityStoreRegistry().registerSystem(new DialogueTickingSystem());
+        Creditor.start(host);
         isStartDone = true;
     }
 

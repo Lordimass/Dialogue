@@ -47,7 +47,6 @@ public class DialoguePageManager {
     private void openDialogue(DialogueAsset dialogue) {
         this.dialogue = dialogue;
         if (dialogue == null) {if (hyUIPage != null) close();  return;}
-        if (typewriterEffectInfo != null) typewriterEffectInfo.reset();
 
         builder = PageBuilder
             .pageForPlayer(playerRef)

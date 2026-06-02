@@ -23,7 +23,10 @@ val lombokVersion = "1.18.40"
 dependencies {
     compileOnly("org.jetbrains:annotations:26.1.0")
     compileOnly("org.jspecify:jspecify:1.0.0")
+
+    // CurseMaven Hytale Libraries
     implementation("curse.maven:hyui-1431415:8151837")
+    implementation("curse.maven:creditor-1560961:8181395")
 
     // Lombok
     compileOnly("org.projectlombok:lombok:$lombokVersion")
@@ -71,7 +74,8 @@ hytalePublisher {
         enabled = true
         projectId = property("curseforge_project_id").toString()
 
-        optional("hyui")
+        embeddedLibrary("hyui")
+        embeddedLibrary("creditor")
     }
 }
 

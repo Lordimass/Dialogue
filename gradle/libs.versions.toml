@@ -4,7 +4,7 @@
 [versions]
 hytale = "0.5.1"
 hytaleTools = "1.+"
-hytalePublisher = "1.1.4-alpha.2"
+hytalePublisher = "1.+"
 foojayResolver = "1.0.0"
 kotlin = "2.3.20"
 

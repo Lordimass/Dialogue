@@ -88,17 +88,18 @@ Sometimes you want a splash of colour in your dialogue, or perhaps some *italics
 by name? You can do all of this using placeholders and rich text tags. This is all supported in `.lang` files as well,
 so you can keep your dynamic and rich text localised.
 
-| Placeholder                              | Result                                         |
-|------------------------------------------|------------------------------------------------|
-| \<i>Italics\</i>                         | *Italics*                                      |
-| \<b>Bold\</b>                            | **Bold**                                       |
-| \<color is="#2e94ad">Colourful!\</color> | <span style="color: #2e94ad">Colourful!</span> |
-|                                          |                                                |
-| {username}                               | The player's username                          |
-| {uuid}                                   | The player's UUID                              |
-| {lang}                                   | The language the player is using, e.g. `en-US` |
+| Placeholder                               | Result                                                                                                                       |
+|-------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
+| `<i>Italics\</i>`                         | *Italics*                                                                                                                    |
+| `<b>Bold\</b>`                            | **Bold**                                                                                                                     |
+| `<color is="#2e94ad">Colourful!\</color>` | <span style="color: #2e94ad">Colourful!</span>                                                                               |
+| `<sound is="SOUND_EVENT">`                | Plays a sound event to the player when this tag is encountered. Only applicable when `TypewriteEffect` has not been disabled |                                     
+|                                           |                                                                                                                              |
+| {username}                                | The player's username                                                                                                        |
+| {uuid}                                    | The player's UUID                                                                                                            |
+| {lang}                                    | The language the player is using, e.g. `en-US`                                                                               |
 
-You can even specify your own custom placeholders. Here's how we register the last three placeholders above:
+You can even specify your own custom text placeholders. Here's how we register the last three placeholders above:
 ```java
 DialogueMod.get().registerParameter("{username}", PlayerRef.class, PlayerRef::getUsername);
 DialogueMod.get().registerParameter("{uuid}", PlayerRef.class, p -> p.getUuid().toString());
