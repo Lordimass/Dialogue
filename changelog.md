@@ -1,3 +1,1 @@
-- Added brief pauses on punctuation for voiced dialogue
-- Added sound events which can be added to your dialogue inline by adding a `<sound is="SOUND_EVENT">` tag.
-- Installed [Creditor](https://www.curseforge.com/hytale/mods/creditor)
+- Added custom in-line event tags! These can be registered using 

@@ -5,6 +5,8 @@ import com.hypixel.hytale.server.core.asset.type.soundevent.config.SoundEvent;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.SoundUtil;
 import net.lordimass.dialogue.codec.DialogueAsset;
+import net.lordimass.dialogue.player.DialoguePageManager;
+import java.util.Map;
 
 public class VoiceHandler {
     DialogueAsset dialogue;
@@ -30,8 +32,12 @@ public class VoiceHandler {
         SoundUtil.playSoundEvent2dToPlayer(playerRef, soundIndex, SoundCategory.SFX);
     }
 
-    public static void play(String soundEventId, PlayerRef playerRef) {
-        int id = SoundEvent.getAssetMap().getIndex(soundEventId);
-        SoundUtil.playSoundEvent2dToPlayer(playerRef, id, SoundCategory.SFX);
+    public static boolean playSoundEvent(DialoguePageManager pageManager, Map<String, String> params) {
+        if (!params.containsKey("is")) return false;
+        String soundEvent = params.get("is");
+
+        int id = SoundEvent.getAssetMap().getIndex(soundEvent);
+        SoundUtil.playSoundEvent2dToPlayer(pageManager.getPlayerRef(), id, SoundCategory.SFX);
+        return id != Integer.MIN_VALUE;
     }
 }

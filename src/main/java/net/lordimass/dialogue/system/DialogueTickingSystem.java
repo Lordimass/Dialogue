@@ -3,28 +3,27 @@ package net.lordimass.dialogue.system;
 import au.ellie.hyui.builders.HyUIPage;
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
+import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.tick.DelayedEntitySystem;
 import com.hypixel.hytale.server.core.entity.entities.Player;
-import com.hypixel.hytale.server.core.entity.entities.player.pages.PageManager;
+import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import lombok.Getter;
-import lombok.Setter;
+import net.lordimass.dialogue.DialogueMod;
+import net.lordimass.dialogue.parameter.ParameterRegister;
+import net.lordimass.dialogue.parameter.eventTag.EventTagParameterContext;
 import net.lordimass.dialogue.player.DialoguePageManager;
 import net.lordimass.dialogue.util.TokenString;
-import net.lordimass.dialogue.util.TranslationUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static net.lordimass.dialogue.util.TokenString.SOUND_TAG_REGEX;
 
 /**
  * Handles the typewriter effect for any dialogues added to its <code>tickingPageManagers</code>
@@ -50,23 +49,25 @@ public class DialogueTickingSystem extends DelayedEntitySystem<EntityStore> {
     ) {
         ArrayList<DialoguePageManager> newTickingPageManagers = new ArrayList<>();
         tickingPageManagers.forEach((pageManager) -> {
-            TypewriterEffectInfo info = pageManager.getTypewriterEffectInfo();
-            TokenString tokenString = info.getTokenString();
-            String nextToken = tokenString.next();
-            if (nextToken == null) return;
-
-            updateGui(pageManager, tokenString.getInProgressString());
-            // charAt 0 is usually the only character in the token at this stage.
-            String soundEvent = nextToken.matches(SOUND_TAG_REGEX) ? nextToken.replaceAll(SOUND_TAG_REGEX, "$1") : null;
-            if (DELAY_CHARACTERS.contains(nextToken.charAt(0)) || soundEvent != null) info.delayNext = true;
-
-            playSounds(pageManager, nextToken, soundEvent);
-
-            if (!tokenString.isComplete()) {
-                newTickingPageManagers.add(pageManager);
-            }
+            if (tickPageManger(pageManager)) newTickingPageManagers.add(pageManager);
         });
         tickingPageManagers = new ArrayList<>(newTickingPageManagers);
+    }
+
+    private static boolean tickPageManger(DialoguePageManager pageManager) {
+        TypewriterEffectInfo info = pageManager.getTypewriterEffectInfo();
+        TokenString tokenString = info.getTokenString();
+        String nextToken = tokenString.next();
+        if (nextToken == null) return false;
+
+        updateGui(pageManager, tokenString.getInProgressString());
+        boolean isEventTag = processEventTag(pageManager, nextToken);
+        boolean isDelayChar = nextToken.length() == 1 && DELAY_CHARACTERS.contains(nextToken.charAt(0));
+        if (isDelayChar || isEventTag) info.delayNext = true;
+
+        pageManager.getTypewriterEffectInfo().getVoiceHandler().play(nextToken.charAt(0));
+
+        return !tokenString.isComplete();
     }
 
     private static void updateGui(DialoguePageManager pageManager, String content) {
@@ -76,12 +77,13 @@ public class DialogueTickingSystem extends DelayedEntitySystem<EntityStore> {
         hyUIPage.updatePage(false);
     }
 
-    private static void playSounds(DialoguePageManager pageManager, String token, @Nullable String soundEvent) {
-        if (soundEvent != null) {
-            VoiceHandler.play(soundEvent, pageManager.getPlayerRef());
-        } else {
-            pageManager.getTypewriterEffectInfo().getVoiceHandler().play(token.charAt(0));
-        }
+    private static boolean processEventTag(DialoguePageManager pageManager, String token) {
+        EventTagParameterContext ctx = new EventTagParameterContext(token);
+        ctx.put(Ref.class, pageManager.getNpcRef());
+        ctx.put(PlayerRef.class, pageManager.getPlayerRef());
+        ctx.put(DialogueMod.class, DialogueMod.get());
+        ctx.put(DialoguePageManager.class, pageManager);
+        return ParameterRegister.processEventTag(ctx);
     }
 
     @Override

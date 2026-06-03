@@ -3,7 +3,7 @@ package net.lordimass.dialogue.parameter;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class ParameterContext {
+public class ParameterContext {
 
     private final Map<Class<?>, Object> contexts = new HashMap<>();
 

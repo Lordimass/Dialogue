@@ -4,10 +4,9 @@ import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import net.lordimass.dialogue.DialogueMod;
 import net.lordimass.dialogue.parameter.ParameterContext;
+import net.lordimass.dialogue.parameter.ParameterRegister;
 
 import java.util.*;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.stream.Collectors;
 
 public final class TranslationUtils {
 
@@ -19,7 +18,7 @@ public final class TranslationUtils {
         ctx.put(DialogueMod.class, DialogueMod.get());
 
         Message message = Message.translation(key);
-        message = Message.translation(DialogueMod.process(message.getAnsiMessage(), ctx));
+        message = Message.translation(ParameterRegister.processReplacementTags(message.getAnsiMessage(), ctx));
 
         return message;
     }

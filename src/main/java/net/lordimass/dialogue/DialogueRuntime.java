@@ -12,17 +12,20 @@ import com.hypixel.hytale.server.npc.NPCPlugin;
 import net.lordimass.dialogue.action.builder.BuilderActionBeginDialogue;
 import net.lordimass.dialogue.codec.DialogueAsset;
 import net.lordimass.dialogue.component.NPCDialogueComponent;
+import net.lordimass.dialogue.player.DialoguePageManager;
 import net.lordimass.dialogue.player.DialoguePlayer;
 import net.lordimass.dialogue.player.DialoguePlayerConfig;
 import net.lordimass.dialogue.player.commands.DialogueCommand;
 import net.lordimass.dialogue.sensor.builder.BuilderSensorDialogue;
 import net.lordimass.dialogue.system.DialogueTickingSystem;
+import net.lordimass.dialogue.system.VoiceHandler;
 
 import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static net.lordimass.dialogue.DialogueMod.registerParameter;
+import static net.lordimass.dialogue.parameter.ParameterRegister.registerEventTag;
+import static net.lordimass.dialogue.parameter.ParameterRegister.registerReplacementParameter;
 
 /**
  * Class to hold methods and functionality which must be run on plugin boot. Separated from
@@ -44,9 +47,11 @@ public class DialogueRuntime {
 
     public static void setup(JavaPlugin host) {
         if (isSetupDone) return;
-        registerParameter("{username}", PlayerRef.class, PlayerRef::getUsername);
-        registerParameter("{uuid}", PlayerRef.class, p -> p.getUuid().toString());
-        registerParameter("{lang}", PlayerRef.class, PlayerRef::getLanguage);
+        registerReplacementParameter("{username}", PlayerRef.class, PlayerRef::getUsername);
+        registerReplacementParameter("{uuid}", PlayerRef.class, p -> p.getUuid().toString());
+        registerReplacementParameter("{lang}", PlayerRef.class, PlayerRef::getLanguage);
+
+        registerEventTag("sound", DialoguePageManager.class, VoiceHandler::playSoundEvent, new String[]{"is"});
 
         DialogueMod.dialogueComponentType = host.getEntityStoreRegistry().registerComponent(NPCDialogueComponent.class, NPCDialogueComponent::new);
 

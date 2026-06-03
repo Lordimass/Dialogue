@@ -1,7 +1,12 @@
 package net.lordimass.dialogue.util;
 
+import com.hypixel.hytale.logger.HytaleLogger;
 import lombok.Getter;
 import lombok.ToString;
+import net.lordimass.dialogue.DialogueMod;
+import net.lordimass.dialogue.parameter.ParameterRegister;
+import net.lordimass.dialogue.parameter.eventTag.EventTagParameterContext;
+import net.lordimass.dialogue.parameter.eventTag.EventTagProcessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +16,8 @@ import java.util.stream.Collectors;
 
 @ToString
 public class TokenString {
+    private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
+
     public final String base;
     @Getter
     private String inProgressString;
@@ -18,16 +25,6 @@ public class TokenString {
     private int pointer = -1;
     @Getter
     private boolean complete;
-    public static final String SOUND_TAG_REGEX = "<sound is=\"(.*?)\">";
-    private static final String[] NO_CLOSING_TAG_REQUIRED = {SOUND_TAG_REGEX};
-
-    public static void main() {
-        TokenString tokenString = new TokenString("<color is=\"#777777\">Uh</color><color is=\"#999999\">...</color>\nDo I know you?<sound is=\"Voice_Effect_Question\">");
-        while (!tokenString.isComplete()) {
-            System.out.println(tokenString.next() + " " + tokenString.inProgressString);
-        }
-
-    }
 
     public TokenString(String base) {
         this.base = base;
@@ -49,7 +46,13 @@ public class TokenString {
                 cont = false;
             }
         }
-        inProgressString = buildInProgressString();
+        try {
+            inProgressString = buildInProgressString();
+        } catch (RuntimeException e) {
+            LOGGER.atSevere().withCause(e).log("Error building in-progress string");
+            complete = true;
+        }
+
         return token;
     }
 
@@ -84,10 +87,8 @@ public class TokenString {
     }
 
     private boolean isClosingTagRequired(String token) {
-        for (String tagCheck : NO_CLOSING_TAG_REQUIRED) {
-            if (token.matches(tagCheck)) {
-                return false;
-            }
+        for (EventTagProcessor<?> eventTagProcessor : ParameterRegister.getEventTagProcessors()) {
+            if (eventTagProcessor.matches(token)) return false;
         }
         return true;
     }
