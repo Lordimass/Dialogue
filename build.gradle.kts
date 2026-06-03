@@ -26,7 +26,7 @@ dependencies {
 
     // CurseMaven Hytale Libraries
     implementation("curse.maven:hyui-1431415:8151837")
-    implementation("curse.maven:creditor-1560961:8181395")
+    implementation("curse.maven:creditor-1560961:8187845")
 
     // Lombok
     compileOnly("org.projectlombok:lombok:$lombokVersion")
