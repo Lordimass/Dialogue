@@ -1,0 +1,58 @@
+{
+  "Id": "DialogueChoice",
+  "Title": "DialogueChoice",
+  "Color": "Blue",
+  "Inputs": [
+    {
+      "Id": "Dialogue",
+      "Type": "Dialogue",
+      "Color": "Aqua",
+      "Multiple": true,
+      "Label": "Previous"
+    }
+  ],
+  "Content": [
+    {
+      "Id": "Title",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Title",
+        "Width": 150
+      }
+    },
+    {
+      "Id": "Type",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "Type",
+        "Width": 150
+      }
+    },
+    {
+      "Id": "BlockIdentifier",
+      "Type": "SmallString",
+      "Options": {
+        "Label": "BlockIdentifier",
+        "Width": 150
+      }
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Entries",
+      "Type": "ChoiceEntry",
+      "Color": "Olive",
+      "Multiple": true,
+      "Label": "Entries"
+    },
+    {
+      "Id": "Next",
+      "Type": "Dialogue",
+      "Color": "Aqua",
+      "Label": "Next"
+    }
+  ],
+  "Schema": {
+    "Type": "Dialogue"
+  }
+}

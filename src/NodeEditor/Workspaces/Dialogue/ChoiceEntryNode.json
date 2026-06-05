@@ -1,0 +1,30 @@
+{
+  "Id": "ChoiceEntry",
+  "Title": "ChoiceEntry",
+  "Color": "Green",
+  "Content": [
+    {
+      "Id": "Content",
+      "Type": "String",
+      "Options": {
+        "Label": "Content",
+        "Width": 150
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "Entries",
+      "Type": "ChoiceEntry",
+      "Color": "Olive"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "Next",
+      "Type": "Dialogue",
+      "Color": "Aqua",
+      "Label": "Next"
+    }
+  ]
+}

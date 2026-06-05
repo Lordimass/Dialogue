@@ -1,0 +1,25 @@
+{
+  "Id": "DialogueEntry",
+  "Title": "DialogueEntry",
+  "Color": "Green",
+  "Content": [
+    {
+      "Id": "Content",
+      "Type": "String",
+      "Options": {
+        "Label": "Content",
+        "Width": 150
+      }
+    }
+  ],
+  "Inputs": [
+    {
+      "Id": "EntriesList",
+      "Type": "DialogueEntry",
+      "Color": "Olive"
+    }
+  ],
+  "Schema": {
+    "Type": "DialogueEntry"
+  }
+}

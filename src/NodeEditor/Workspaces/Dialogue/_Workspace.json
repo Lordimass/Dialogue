@@ -1,0 +1,30 @@
+{
+  "WorkspaceName": "Dialogue",
+  "Roots": {
+    "DemoWorkspace": {
+      "RootNodeType": "DialogueDialogue",
+      "MenuName": "Dialogue"
+    }
+  },
+  "NodeCategories": {
+    "Dialogue": [
+      "DialogueDialogue",
+      "DialogueChoice",
+      "DialogueReference"
+    ],
+    "Entry": [
+      "DialogueEntry",
+      "ChoiceEntry"
+    ]
+  },
+  "Variants": {
+    "DialogueVariants": {
+      "VariantFieldName": "Dialogue",
+      "Variants": {
+        "Dialogue": "DialogueDialogue",
+        "Choice": "DialogueChoice",
+        "Reference": "DialogueReference"
+      }
+    }
+  }
+}

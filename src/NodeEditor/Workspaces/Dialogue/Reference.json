@@ -1,0 +1,16 @@
+{
+  "Id": "DialogueReference",
+  "Title": "DialogueReference",
+  "Color": "Olive",
+  "IsReference": true,
+  "FileRefKey": "Dialogue",
+  "FileRefValue": "Id",
+  "ModifyKey": "Modify",
+  "Inputs": [
+    {
+      "Id": "ReferencePin",
+      "Type": "Dialogue",
+      "Color": "Olive"
+    }
+  ]
+}
