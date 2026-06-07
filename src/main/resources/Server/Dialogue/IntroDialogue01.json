@@ -5,7 +5,7 @@
       "Content": "dialogue.IntroDialogue01.content.0"
     }
   ],
-  "Title": "dialogue.username.name",
+  "Character": "Player",
   "Next": {
     "BlockIdentifier": "IntroDialogue02",
     "Type": "Dialogue",

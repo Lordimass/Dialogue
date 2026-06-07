@@ -2,6 +2,8 @@ package net.lordimass.dialogue.player;
 
 import au.ellie.hyui.builders.*;
 import au.ellie.hyui.html.TemplateProcessor;
+import au.ellie.hyui.utils.HyvatarUtils;
+import au.ellie.hyui.utils.PngDownloadUtils;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
@@ -16,6 +18,7 @@ import net.lordimass.dialogue.system.DialogueTickingSystem;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.util.Objects;
 
 import static net.lordimass.dialogue.util.TranslationUtils.translateWithHYUIML;
@@ -69,7 +72,7 @@ public class DialoguePageManager {
 
     private void populateDialogue() {
         StringBuilder entries = new StringBuilder();
-        for (DialogueEntry entry : dialogue.entries) {
+        for (DialogueEntry entry : dialogue.getEntries()) {
             entries
                 .append(translateWithHYUIML(entry.getContent(), playerRef))
                 .append("\n");
@@ -92,15 +95,15 @@ public class DialoguePageManager {
 
     private void populateChoices() {
         TemplateProcessor template = builder.getTemplateProcessor();
-        if (dialogue.entries.length >  MAX_CHOICES) {
+        if (dialogue.getEntries().length >  MAX_CHOICES) {
             LOGGER.atWarning().log(
                 "Dialogue choice page only supports up to 4 entries. "
-                    + dialogue.id
+                    + dialogue.getId()
                     + " has "
-                    + dialogue.entries.length);
+                    + dialogue.getEntries().length);
         }
-        for (int i = 0; i < Math.min(dialogue.entries.length, MAX_CHOICES); i++) {
-            DialogueEntry entry = dialogue.entries[i];
+        for (int i = 0; i < Math.min(dialogue.getEntries().length, MAX_CHOICES); i++) {
+            DialogueEntry entry = dialogue.getEntries()[i];
             String content = translateWithHYUIML(entry.getContent(), playerRef);
             template
                 .setVariable("choice"+i, content)
@@ -118,7 +121,7 @@ public class DialoguePageManager {
             .setVariable("nextButtonDisplay", "block")
             .setVariable("nextButtonText", isNextExists ? "NEXT" : "CLOSE");
         hyUIPage.updatePage(false);
-        builder.addEventListener("next-button", CustomUIEventBindingType.Activating, (_, ctx) -> {
+        builder.addEventListener("next-button", CustomUIEventBindingType.Activating, _ -> {
             if (isNextExists) openDialogue(dialogue.getNext());
             else close();
         });

@@ -5,11 +5,13 @@
     "Description": "Allows server owners and modders to add custom dialogue and interactivity to any NPC.",
     "Authors": [
         {
-            "Name": "Lordimass"
+            "Name": "Lordimass",
+            "Email": "lordimass@lordimass.net",
+            "Url": "https://lordimass.net"
         }
     ],
     "Website": "https://www.curseforge.com/hytale/mods/dialogue",
-    "ServerVersion": ">=0.5.3 <0.6.0",
+    "ServerVersion": ">=0.5.4 <0.6.0",
     "Dependencies": {
         "Hytale:AssetModule": "*",
         "Hytale:NPC": "*"

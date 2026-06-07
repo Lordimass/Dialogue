@@ -1,6 +1,7 @@
 package net.lordimass.dialogue.codec;
 
 import com.hypixel.hytale.assetstore.AssetExtraInfo;
+import com.hypixel.hytale.assetstore.AssetKeyValidator;
 import com.hypixel.hytale.assetstore.AssetRegistry;
 import com.hypixel.hytale.assetstore.AssetStore;
 import com.hypixel.hytale.assetstore.codec.AssetBuilderCodec;
@@ -45,11 +46,22 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
             .documentation("Content of the dialogue.")
             .add()
             .append(
+                new KeyedCodec<>("Character", Codec.STRING),
+                (asset, s) -> asset.characterId = s,
+                asset -> asset.characterId
+            )
+            .documentation("The ID of the character asset to use for this Dialogue. Allows " +
+                "different characteristics to be bundled together into one asset instead of having" +
+                "to specify them all individually on every dialogue asset.")
+            .addValidator(new AssetKeyValidator<>(CharacterAsset::getAssetStore))
+            .add()
+            .append(
                 new KeyedCodec<>("Title", Codec.STRING),
                 (asset, s) -> asset.title = s,
                 asset -> asset.title
             )
-            .documentation("Title of the dialogue. Usually the name of the person speaking.")
+            .documentation("Override the title of the dialogue. If left undefined, it will pull" +
+                "from the character. If there is no character, it will simply be blank.")
             .add()
             .append(
                 new KeyedCodec<>("NextId", Codec.STRING),
@@ -57,6 +69,7 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
                 asset -> asset.nextId
             )
             .documentation("The asset ID of the next dialogue that should open after continuing.")
+            .addValidatorLate(() -> new AssetKeyValidator<>(DialogueAsset::getAssetStore).late())
             .add()
             .append(
                 new KeyedCodec<>("Next", new LazyCodec()),
@@ -83,12 +96,23 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
                 (obj, val) -> obj.voice = val,
                 obj -> obj.voice
             )
-            .documentation("The ID of the voice to use for this Dialogue. If undefined, it will " +
-                "choose a voice based on the title of the dialogue, so dialogues with the same " +
-                "title will always have the same voice. Set to the empty string to disable voice." +
+            .documentation("Override the voice to use for this Dialogue. If undefined, it will " +
+                "first try to pull the voice from the character, and if this is also undefined " +
+                "it will choose a voice based on the title of the dialogue. So dialogues with the " +
+                "same title will always have the same voice. Set to the empty string to disable voice." +
                 "This only works if TypewriterEffect has not been disabled.")
             .add()
+            .append(
+                new KeyedCodec<>("Profile", Codec.STRING),
+                (obj, val) -> obj.profile = val,
+                obj -> obj.profile
+            )
+            .documentation("The image to use as the 'profile' image of the character. Will " +
+                "display beside their dialogue box when they are speaking. This should be a UI " +
+                "image asset in Common/UI/Custom/**/*.")
+            .add()
             .build();
+
 
     public static final AssetBuilderCodec<String, DialogueAsset> ASSET_BUILDER_CODEC =
         AssetBuilderCodec.wrap(
@@ -102,24 +126,20 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
 
     private static AssetStore<String, DialogueAsset, DefaultAssetMap<String, DialogueAsset>> ASSET_STORE;
     private AssetExtraInfo.Data extraData;
-    @Getter
-    private DialogueType type = DialogueType.Dialogue;
-    @Getter
-    public String id;
-    @Getter
-    public DialogueEntry[] entries;
+    @Getter private DialogueType type = DialogueType.Dialogue;
+    @Getter private String id;
+    @Getter private DialogueEntry[] entries;
     private String nextId;
     private DialogueAsset next;
-    @Getter
-    @Nullable
-    private String title;
+    @Nullable private String title;
     private String blockId;
-    @Getter
-    private boolean typewriterEffect = true;
+    @Getter private boolean typewriterEffect = true;
+    private String characterId;
+    private CharacterAsset character;
     private String voice;
+    private String profile;
 
-    protected DialogueAsset() {
-    }
+    protected DialogueAsset() {}
 
     public String getBlockId() {
         return blockId == null ? id : blockId;
@@ -154,6 +174,13 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
         return null;
     }
 
+    public CharacterAsset getCharacter() {
+        if (characterId == null) return null;
+        if (character != null && character.getId().equals(characterId)) return character;
+        character = CharacterAsset.getAsset(characterId);
+        return character;
+    }
+
     /**
      * Get the voice to use for this dialogue.
      * <br><br>
@@ -165,6 +192,11 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
      */
     @Nullable
     public String getVoice() {
+        CharacterAsset character = getCharacter();
+        if (character != null) {
+            String voice = character.getVoice();
+            if (voice != null) return voice;
+        }
         if (voice != null) return voice.isEmpty() ? null : voice;
         if (this.title == null) return DialogueMod.BUILTIN_VOICE_IDS[0];
         int value = 0;
@@ -174,6 +206,23 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
         voice = DialogueMod.BUILTIN_VOICE_IDS[value % DialogueMod.BUILTIN_VOICE_IDS.length];
         return voice;
     }
+
+    @Nullable
+    public String getProfile() {
+        if (profile != null) return profile;
+        CharacterAsset character = getCharacter();
+        if (character != null) return character.getProfile();
+        return null;
+    }
+
+    @Nullable
+    public String getTitle() {
+        if (title != null) return title;
+        CharacterAsset character = getCharacter();
+        if (character != null) return character.getName();
+        return null;
+    }
+
 
     /** Lazy DialogueAsset.CODEC work around so that the codec can be self-referential. */
     public static class LazyCodec implements Codec<DialogueAsset> {

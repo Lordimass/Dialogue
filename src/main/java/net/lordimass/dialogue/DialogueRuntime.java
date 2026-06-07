@@ -10,6 +10,7 @@ import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.npc.NPCPlugin;
 import net.lordimass.dialogue.action.builder.BuilderActionBeginDialogue;
+import net.lordimass.dialogue.codec.CharacterAsset;
 import net.lordimass.dialogue.codec.DialogueAsset;
 import net.lordimass.dialogue.component.NPCDialogueComponent;
 import net.lordimass.dialogue.player.DialoguePageManager;
@@ -41,12 +42,7 @@ public class DialogueRuntime {
 
     private DialogueRuntime() {}
 
-    // Used to prevent mod from being initialised multiple times if more than one mod is installed which uses Dialogue as a library.
-    private static boolean isSetupDone = false;
-    private static boolean isStartDone = false;
-
     public static void setup(JavaPlugin host) {
-        if (isSetupDone) return;
         registerReplacementParameter("{username}", PlayerRef.class, PlayerRef::getUsername);
         registerReplacementParameter("{uuid}", PlayerRef.class, p -> p.getUuid().toString());
         registerReplacementParameter("{lang}", PlayerRef.class, PlayerRef::getLanguage);
@@ -63,29 +59,29 @@ public class DialogueRuntime {
         registerAssetTypes(host);
         registerEvents(host);
         Creditor.setup(host);
-        isSetupDone = true;
     }
 
     public static void start(JavaPlugin host) {
-        if (isStartDone) return;
         host.getEntityStoreRegistry().registerSystem(new DialogueTickingSystem());
         Creditor.start(host);
-        isStartDone = true;
     }
 
     private static void registerAssetTypes(JavaPlugin host) {
-        HytaleAssetStore.Builder<String, DialogueAsset, DefaultAssetMap<String, DialogueAsset>> dialogAssetBuilder =
-            HytaleAssetStore.builder(
-                DialogueAsset.class,
-                new DefaultAssetMap<>()
-            );
+        host.getAssetRegistry().register(
+            HytaleAssetStore.builder(CharacterAsset.class, new DefaultAssetMap<>())
+                .setPath("Dialogue/Character")
+                .setCodec(CharacterAsset.ASSET_BUILDER_CODEC)
+                .setKeyFunction(CharacterAsset::getId)
+                .loadsAfter(Interaction.class)
+                .build()
+        );
 
         host.getAssetRegistry().register(
-            dialogAssetBuilder
+                HytaleAssetStore.builder(DialogueAsset.class, new DefaultAssetMap<>())
                 .setPath("Dialogue")
                 .setCodec(DialogueAsset.ASSET_BUILDER_CODEC)
                 .setKeyFunction(DialogueAsset::getId)
-                .loadsAfter(Interaction.class)
+                .loadsAfter(CharacterAsset.class)
                 .build()
         );
     }
