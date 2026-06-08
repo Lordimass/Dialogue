@@ -1,13 +1,15 @@
 {
   "Type": "Choice",
-  "Title": "dialogue.username.name",
+  "Character": "Player",
+  "Character2": "Hans",
   "Entries": [
     {
       "Content": "dialogue.IntroDialogue03.content.0",
       "Next": {
         "BlockIdentifier": "IntroDialogue03_C01",
         "Type": "Dialogue",
-        "Title": "dialogue.Hans.name",
+        "Character": "Hans",
+        "Character2": "Player",
         "Entries": [
           {
             "Content": "dialogue.IntroDialogue03_C01.content.0"

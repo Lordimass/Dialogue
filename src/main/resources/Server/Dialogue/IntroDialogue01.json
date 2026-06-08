@@ -9,7 +9,8 @@
   "Next": {
     "BlockIdentifier": "IntroDialogue02",
     "Type": "Dialogue",
-    "Title": "dialogue.Hans.name",
+    "Character": "Hans",
+    "Character2": "Player",
     "Entries": [
       {
         "Content": "dialogue.IntroDialogue02.content.0"

@@ -50,18 +50,18 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
                 (asset, s) -> asset.characterId = s,
                 asset -> asset.characterId
             )
-            .documentation("The ID of the character asset to use for this Dialogue. Allows " +
-                "different characteristics to be bundled together into one asset instead of having" +
-                "to specify them all individually on every dialogue asset.")
+            .documentation("The ID of the character asset to use for this Dialogue.")
             .addValidator(new AssetKeyValidator<>(CharacterAsset::getAssetStore))
             .add()
             .append(
-                new KeyedCodec<>("Title", Codec.STRING),
-                (asset, s) -> asset.title = s,
-                asset -> asset.title
+                new KeyedCodec<>("Character2", Codec.STRING),
+                (asset, s) -> asset.character2Id = s,
+                asset -> asset.character2Id
             )
-            .documentation("Override the title of the dialogue. If left undefined, it will pull" +
-                "from the character. If there is no character, it will simply be blank.")
+            .documentation("The ID of the second character asset to use for this Dialogue." +
+                "Optional, but adds an additional character portrait as the character being" +
+                "spoken to.")
+            .addValidator(new AssetKeyValidator<>(CharacterAsset::getAssetStore))
             .add()
             .append(
                 new KeyedCodec<>("NextId", Codec.STRING),
@@ -92,25 +92,6 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
             .documentation("A unique identifier for this specific dialogue block. If left " +
                 "undefined, it will default to the ID of the asset (i.e. the JSON file name).")
             .add()
-            .append(new KeyedCodec<>("Voice", Codec.STRING),
-                (obj, val) -> obj.voice = val,
-                obj -> obj.voice
-            )
-            .documentation("Override the voice to use for this Dialogue. If undefined, it will " +
-                "first try to pull the voice from the character, and if this is also undefined " +
-                "it will choose a voice based on the title of the dialogue. So dialogues with the " +
-                "same title will always have the same voice. Set to the empty string to disable voice." +
-                "This only works if TypewriterEffect has not been disabled.")
-            .add()
-            .append(
-                new KeyedCodec<>("Profile", Codec.STRING),
-                (obj, val) -> obj.profile = val,
-                obj -> obj.profile
-            )
-            .documentation("The image to use as the 'profile' image of the character. Will " +
-                "display beside their dialogue box when they are speaking. This should be a UI " +
-                "image asset in Common/UI/Custom/**/*.")
-            .add()
             .build();
 
 
@@ -131,13 +112,12 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
     @Getter private DialogueEntry[] entries;
     private String nextId;
     private DialogueAsset next;
-    @Nullable private String title;
     private String blockId;
     @Getter private boolean typewriterEffect = true;
     private String characterId;
     private CharacterAsset character;
-    private String voice;
-    private String profile;
+    private String character2Id;
+    private CharacterAsset character2;
 
     protected DialogueAsset() {}
 
@@ -181,48 +161,12 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
         return character;
     }
 
-    /**
-     * Get the voice to use for this dialogue.
-     * <br><br>
-     * If voice was set to the empty string in the JSON asset we return null, signifying that voice
-     * functionality should be disabled.
-     * <br><br>
-     * If voice was not provided, we'll deterministically choose from one of the built-in voices
-     * based on <code>this.title</code>
-     */
-    @Nullable
-    public String getVoice() {
-        CharacterAsset character = getCharacter();
-        if (character != null) {
-            String voice = character.getVoice();
-            if (voice != null) return voice;
-        }
-        if (voice != null) return voice.isEmpty() ? null : voice;
-        if (this.title == null) return DialogueMod.BUILTIN_VOICE_IDS[0];
-        int value = 0;
-        for (char c : this.title.toCharArray()) {
-            value += Character.getNumericValue(c);
-        }
-        voice = DialogueMod.BUILTIN_VOICE_IDS[value % DialogueMod.BUILTIN_VOICE_IDS.length];
-        return voice;
+    public CharacterAsset getCharacter2() {
+        if (character2Id == null) return null;
+        if (character2 != null && character2.getId().equals(character2Id)) return character2;
+        character2 = CharacterAsset.getAsset(character2Id);
+        return character2;
     }
-
-    @Nullable
-    public String getProfile() {
-        if (profile != null) return profile;
-        CharacterAsset character = getCharacter();
-        if (character != null) return character.getProfile();
-        return null;
-    }
-
-    @Nullable
-    public String getTitle() {
-        if (title != null) return title;
-        CharacterAsset character = getCharacter();
-        if (character != null) return character.getName();
-        return null;
-    }
-
 
     /** Lazy DialogueAsset.CODEC work around so that the codec can be self-referential. */
     public static class LazyCodec implements Codec<DialogueAsset> {

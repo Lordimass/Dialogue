@@ -1,3 +1,5 @@
 {
-  "Name": "dialogue.username.name"
+  "Name": "dialogue.username.name",
+  "Portrait": "Lordimass.png",
+  "InactivePortrait": "LordimassInactive.png"
 }

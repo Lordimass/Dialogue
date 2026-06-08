@@ -87,4 +87,22 @@
     <button id="next-button" style="display: {{$nextButtonDisplay|none}}">
         {{$nextButtonText|NEXT}}
     </button>
+    <img
+        src="{{$portraitLeftSrc|none}}"
+        style="
+            anchor-width: 320;
+            anchor-height: 320;
+            anchor-left: -370;
+            anchor-bottom: {{$portraitLeftBottomAnchor|-50}};
+            display: {{$portraitLeftDisplay|none}}"
+    />
+    <img
+        src="{{$portraitRightSrc|none}}"
+        style="
+            anchor-width: -320;
+            anchor-height: 320;
+            anchor-right: -50;
+            anchor-bottom: {{$portraitRightBottomAnchor|-50}};
+            display: {{$portraitRightDisplay|none}}"
+    />
 </div>

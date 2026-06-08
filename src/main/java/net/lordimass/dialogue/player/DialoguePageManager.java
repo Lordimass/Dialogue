@@ -2,8 +2,6 @@ package net.lordimass.dialogue.player;
 
 import au.ellie.hyui.builders.*;
 import au.ellie.hyui.html.TemplateProcessor;
-import au.ellie.hyui.utils.HyvatarUtils;
-import au.ellie.hyui.utils.PngDownloadUtils;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
@@ -18,7 +16,6 @@ import net.lordimass.dialogue.system.DialogueTickingSystem;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.util.Objects;
 
 import static net.lordimass.dialogue.util.TranslationUtils.translateWithHYUIML;
@@ -27,23 +24,21 @@ public class DialoguePageManager {
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
     private static final int MAX_CHOICES = 4;
 
-    @Getter
-    private final PlayerRef playerRef;
-    @Getter
-    private final Ref<EntityStore> npcRef;
+    @Getter private final PlayerRef playerRef;
+    @Getter private final Ref<EntityStore> npcRef;
+    @Getter private final PortraitElementManager portraitManager;
+    @Getter private HyUIPage hyUIPage;
+    @Getter private DialogueTickingSystem.TypewriterEffectInfo typewriterEffectInfo;
+    @Getter private DialogueAsset dialogue;
+
     private PageBuilder builder;
-    @Getter
-    private HyUIPage hyUIPage;
-    @Getter
-    private DialogueTickingSystem.TypewriterEffectInfo typewriterEffectInfo;
-    @Getter
-    private DialogueAsset dialogue;
 
     public DialoguePageManager(@Nonnull PlayerRef playerRef, @Nullable Ref<EntityStore> npcRef,
                                DialogueAsset dialogue
                         ) {
         this.playerRef = playerRef;
         this.npcRef = npcRef;
+        this.portraitManager = new PortraitElementManager();
         openDialogue(dialogue);
     }
 
@@ -57,6 +52,9 @@ public class DialoguePageManager {
             .enableRuntimeTemplateUpdates(true)
             .onDismiss(this::closeCallback)
             .withLifetime(CustomPageLifetime.CanDismiss);
+
+        portraitManager.updatePortraits(builder, this);
+
         hyUIPage = builder.open(Objects.requireNonNull(playerRef.getReference()).getStore());
         assert hyUIPage != null;
 
@@ -65,6 +63,8 @@ public class DialoguePageManager {
             case Choice -> populateChoices();
             default -> buildNEXTButton();
         }
+
+
         hyUIPage.updatePage(true);
 
         NPCDialogueComponent.update(npcRef, dialogue, playerRef);
@@ -87,10 +87,9 @@ public class DialoguePageManager {
         }
 
         builder.getTemplateProcessor()
-            .setVariable("title", translateWithHYUIML(dialogue.getTitle(), playerRef))
+            .setVariable("title", translateWithHYUIML(dialogue.getCharacter().getName(), playerRef))
             .setVariable("content", inProgressString);
         buildNEXTButton();
-
     }
 
     private void populateChoices() {

@@ -19,7 +19,7 @@ public class VoiceHandler {
 
     public void play(char c) {
         int soundIndex = SoundEvent.getAssetMap().getIndex(
-            dialogue.getVoice() +
+            dialogue.getCharacter().getVoice() +
                 "_Voice_" +
                 Character.toUpperCase(c)
         );

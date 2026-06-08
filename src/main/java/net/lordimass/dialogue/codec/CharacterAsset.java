@@ -15,6 +15,7 @@ import lombok.Setter;
 import net.lordimass.dialogue.DialogueMod;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class CharacterAsset implements JsonAssetWithMap<String, DefaultAssetMap<String, CharacterAsset>> {
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
@@ -36,12 +37,20 @@ public class CharacterAsset implements JsonAssetWithMap<String, DefaultAssetMap<
                 "This only works if TypewriterEffect has not been disabled.")
             .add()
             .append(
-                new KeyedCodec<>("Profile", Codec.STRING),
-                CharacterAsset::setProfile, CharacterAsset::getProfile
+                new KeyedCodec<>("Portrait", Codec.STRING),
+                CharacterAsset::setPortrait, CharacterAsset::getPortrait
             )
-            .documentation("The image to use as the 'profile' image of the character. Will " +
+            .documentation("The image to use as the portrait image of the character. Will " +
                 "display beside their dialogue box when they are speaking. This should be a UI " +
-                "image asset in Common/UI/Custom/**/*.")
+                "image asset in Common/UI/Custom/Portrait/**/*.")
+            .add()
+            .append(
+                new KeyedCodec<>("InactivePortrait", Codec.STRING),
+                CharacterAsset::setInactivePortrait, obj -> obj.inactivePortrait
+            )
+            .documentation("An additional portrait image to use when the character is not the" +
+                "active speaker in a scene. This is optional and will just use the standard" +
+                "portrait image if not provided.")
             .add()
             .build();
 
@@ -60,7 +69,8 @@ public class CharacterAsset implements JsonAssetWithMap<String, DefaultAssetMap<
     @Getter private String id;
     @Getter @Setter private String name;
     @Setter private String voice;
-    @Getter @Setter private String profile;
+    @Getter @Setter private String portrait;
+    @Setter private String inactivePortrait;
 
     protected CharacterAsset() {};
 
@@ -102,5 +112,19 @@ public class CharacterAsset implements JsonAssetWithMap<String, DefaultAssetMap<
         }
         voice = DialogueMod.BUILTIN_VOICE_IDS[value % DialogueMod.BUILTIN_VOICE_IDS.length];
         return voice;
+    }
+
+    public String getInactivePortrait() {
+        if (inactivePortrait != null) return inactivePortrait;
+        return this.portrait;
+    }
+
+    public static boolean equals(CharacterAsset a, CharacterAsset b) {
+        if (a == null && b == null) return true;
+        if (a == null || b == null) return false;
+        return Objects.equals(a.getVoice(), b.getVoice()) &&
+            Objects.equals(a.getPortrait(), b.getPortrait()) &&
+            Objects.equals(a.getInactivePortrait(), b.getInactivePortrait()) &&
+            Objects.equals(a.getName(), b.getName());
     }
 }

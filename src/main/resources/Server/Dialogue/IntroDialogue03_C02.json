@@ -1,7 +1,7 @@
 {
   "Type": "Dialogue",
-  "Title": "dialogue.Hans.name",
-  "Voice": "M4",
+  "Character": "Hans",
+  "Character2": "Player",
   "Entries": [
     {
       "Content": "dialogue.IntroDialogue03_C02.content.0"
@@ -9,7 +9,8 @@
   ],
   "Next": {
     "Type": "Dialogue",
-    "Title": "dialogue.Hans.name",
+    "Character": "Hans",
+    "Character2": "Player",
     "Entries": [
       {
         "Content": "dialogue.IntroDialogue03_C02.content.1"
