@@ -10,7 +10,7 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import net.lordimass.dialogue.codec.DialogueAsset;
-import net.lordimass.dialogue.player.DialoguePageManager;
+import net.lordimass.dialogue.ui.DialoguePageManager;
 
 import javax.annotation.Nonnull;
 

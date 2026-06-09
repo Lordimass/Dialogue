@@ -9,22 +9,19 @@ import com.hypixel.hytale.component.system.tick.DelayedEntitySystem;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import lombok.Getter;
-import lombok.Setter;
-import net.lordimass.dialogue.player.DialoguePageManager;
+import net.lordimass.dialogue.ui.DialoguePageManager;
+import net.lordimass.dialogue.ui.SimpleAnchor;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DialogueAnimationSystem extends DelayedEntitySystem<EntityStore> {
-    public static final float FPS = 30.0F;
-    public static final List<Animation<?>> ANIMATIONS = new ArrayList<>();
+    private static final float TPS = 30.0F;
+    private static List<Animation<?>> animations = new ArrayList<>();
 
     public DialogueAnimationSystem() {
-        super(1.0F / FPS);
+        super(1.0F / TPS);
     }
 
     @Override
@@ -35,10 +32,18 @@ public class DialogueAnimationSystem extends DelayedEntitySystem<EntityStore> {
         @NonNull Store<EntityStore> store,
         @NonNull CommandBuffer<EntityStore> commandBuffer
     ) {
-        ANIMATIONS.forEach(anim -> {
-            anim.update(dt);
-            anim.pageManager.getHyUIPage().getTemplateProcessor().setVariables(anim.anchorTemplateMapping);
+        List<Animation<?>> newAnimations = new ArrayList<>();
+        List<Animation<?>> completedAnimations = new ArrayList<>();
+        animations.forEach(anim -> {
+            Map<String, String> anchorTemplateMapping = anim.update(dt);
+            anim.pageManager.getHyUIPage().getTemplateProcessor().setVariables(anchorTemplateMapping);
             anim.pageManager.getHyUIPage().updatePage(false);
+            if (anim.animProgressSeconds != anim.durationSeconds) newAnimations.add(anim);
+            else completedAnimations.add(anim);
+        });
+        animations = new ArrayList<>(newAnimations);
+        completedAnimations.forEach(anim -> {
+            if (anim.onComplete != null) anim.onComplete.run();
         });
     }
 
@@ -47,25 +52,27 @@ public class DialogueAnimationSystem extends DelayedEntitySystem<EntityStore> {
         return Player.getComponentType();
     }
 
-    public static void addAnimation(
-        String elementId,
-        UIElementBuilder<?> elementType,
-        SimpleAnchor endAnchor,
-        float durationSeconds
+    /**
+     * Begin animating the movement of a UI element to a new anchor. If an animation is already
+     * in progress for the given element, it will be overridden in favour of this one.
+     */
+    public static <E extends UIElementBuilder<E>> void addAnimation(
+        Animation<E> animation
     ) {
-        
+        animations.removeIf(anim -> anim.elementId.equals(animation.elementId));
+        animations.add(animation);
     }
 
     public static class Animation<E extends UIElementBuilder<E>> {
         public final String elementId;
         public final Class<E> elementType;
-        private final AnchorTemplateKeys anchorKeys;
+        private final SimpleAnchor.AnchorTemplateKeys anchorKeys;
         public final SimpleAnchor startAnchor;
         public final SimpleAnchor endAnchor;
         public final float durationSeconds;
         @Getter protected float animProgressSeconds = 0.0F;
-        @Getter Map<String, String> anchorTemplateMapping;
         DialoguePageManager pageManager;
+        @Nullable Runnable onComplete;
 
         public Animation(
             String elementId,
@@ -73,8 +80,9 @@ public class DialogueAnimationSystem extends DelayedEntitySystem<EntityStore> {
             SimpleAnchor startAnchor,
             SimpleAnchor endAnchor,
             float durationSeconds,
-            AnchorTemplateKeys anchorKeys,
-            DialoguePageManager pageManager
+            SimpleAnchor.AnchorTemplateKeys anchorKeys,
+            DialoguePageManager pageManager,
+            @Nullable Runnable onComplete
         ) {
             this.elementId = elementId;
             this.elementType = elementType;
@@ -83,11 +91,12 @@ public class DialogueAnimationSystem extends DelayedEntitySystem<EntityStore> {
             this.durationSeconds = durationSeconds;
             this.anchorKeys = anchorKeys;
             this.pageManager = pageManager;
+            this.onComplete = onComplete;
         }
 
-        public void update(float dt) {
+        Map<String, String> update(float dt) {
             animProgressSeconds = Math.min(animProgressSeconds + dt, durationSeconds);
-            anchorTemplateMapping = new HashMap<>();
+            Map<String, String> anchorTemplateMapping = new HashMap<>();
             if (anchorKeys.left != null) anchorTemplateMapping.put(anchorKeys.left, ""+lerp(startAnchor.left, endAnchor.left));
             if (anchorKeys.right != null) anchorTemplateMapping.put(anchorKeys.right, ""+lerp(startAnchor.right, endAnchor.right));
             if (anchorKeys.top != null) anchorTemplateMapping.put(anchorKeys.top, ""+lerp(startAnchor.top, endAnchor.top));
@@ -99,44 +108,13 @@ public class DialogueAnimationSystem extends DelayedEntitySystem<EntityStore> {
             if (anchorKeys.width != null) anchorTemplateMapping.put(anchorKeys.width, ""+lerp(startAnchor.width, endAnchor.width));
             if (anchorKeys.minWidth != null) anchorTemplateMapping.put(anchorKeys.minWidth, ""+lerp(startAnchor.minWidth, endAnchor.minWidth));
             if (anchorKeys.maxWidth != null) anchorTemplateMapping.put(anchorKeys.maxWidth, ""+lerp(startAnchor.maxWidth, endAnchor.maxWidth));
+            return anchorTemplateMapping;
         }
 
         private Integer lerp(Integer start, Integer end) {
             if (start == null || end == null) return null;
             return (int) (start + animProgressSeconds*((end - start)/ durationSeconds));
         }
-    }
-
-    public static class AnchorTemplateKeys {
-        @Nullable @Setter String left;
-        @Nullable @Setter String right;
-        @Nullable @Setter String top;
-        @Nullable @Setter String bottom;
-        @Nullable @Setter String height;
-        @Nullable @Setter String full;
-        @Nullable @Setter String horizontal;
-        @Nullable @Setter String vertical;
-        @Nullable @Setter String width;
-        @Nullable @Setter String minWidth;
-        @Nullable @Setter String maxWidth;
-
-        public AnchorTemplateKeys() {}
-    }
-
-    public static class SimpleAnchor {
-        @Nullable @Setter Integer left;
-        @Nullable @Setter Integer right;
-        @Nullable @Setter Integer top;
-        @Nullable @Setter Integer bottom;
-        @Nullable @Setter Integer height;
-        @Nullable @Setter Integer full;
-        @Nullable @Setter Integer horizontal;
-        @Nullable @Setter Integer vertical;
-        @Nullable @Setter Integer width;
-        @Nullable @Setter Integer minWidth;
-        @Nullable @Setter Integer maxWidth;
-
-        public SimpleAnchor() {}
     }
 
 }

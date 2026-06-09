@@ -1,4 +1,4 @@
-package net.lordimass.dialogue.player;
+package net.lordimass.dialogue.ui;
 
 import au.ellie.hyui.builders.*;
 import au.ellie.hyui.html.TemplateProcessor;
@@ -12,7 +12,6 @@ import lombok.Getter;
 import net.lordimass.dialogue.codec.DialogueAsset;
 import net.lordimass.dialogue.codec.DialogueEntry;
 import net.lordimass.dialogue.component.NPCDialogueComponent;
-import net.lordimass.dialogue.system.DialogueAnimationSystem;
 import net.lordimass.dialogue.system.DialogueTypingSystem;
 
 import javax.annotation.Nonnull;
@@ -54,10 +53,8 @@ public class DialoguePageManager {
             .onDismiss(this::closeCallback)
             .withLifetime(CustomPageLifetime.CanDismiss)
             .enablePersistentElementEdits(true);
-
-        portraitManager.updatePortraits(builder, this);
-
         hyUIPage = builder.open(Objects.requireNonNull(playerRef.getReference()).getStore());
+        portraitManager.updatePortraits(builder, this);
         assert hyUIPage != null;
 
         switch (this.dialogue.getType()) {

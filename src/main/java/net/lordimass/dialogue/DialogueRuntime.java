@@ -13,7 +13,7 @@ import net.lordimass.dialogue.action.builder.BuilderActionBeginDialogue;
 import net.lordimass.dialogue.codec.CharacterAsset;
 import net.lordimass.dialogue.codec.DialogueAsset;
 import net.lordimass.dialogue.component.NPCDialogueComponent;
-import net.lordimass.dialogue.player.DialoguePageManager;
+import net.lordimass.dialogue.ui.DialoguePageManager;
 import net.lordimass.dialogue.player.DialoguePlayer;
 import net.lordimass.dialogue.player.DialoguePlayerConfig;
 import net.lordimass.dialogue.player.commands.DialogueCommand;

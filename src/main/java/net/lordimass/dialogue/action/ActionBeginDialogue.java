@@ -10,7 +10,7 @@ import com.hypixel.hytale.server.npc.role.Role;
 import com.hypixel.hytale.server.npc.sensorinfo.InfoProvider;
 import net.lordimass.dialogue.action.builder.BuilderActionBeginDialogue;
 import net.lordimass.dialogue.codec.DialogueAsset;
-import net.lordimass.dialogue.player.DialoguePageManager;
+import net.lordimass.dialogue.ui.DialoguePageManager;
 
 import javax.annotation.Nonnull;
 

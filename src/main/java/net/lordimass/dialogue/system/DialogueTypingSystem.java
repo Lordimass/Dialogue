@@ -14,7 +14,7 @@ import lombok.Getter;
 import net.lordimass.dialogue.DialogueMod;
 import net.lordimass.dialogue.parameter.ParameterRegister;
 import net.lordimass.dialogue.parameter.eventTag.EventTagParameterContext;
-import net.lordimass.dialogue.player.DialoguePageManager;
+import net.lordimass.dialogue.ui.DialoguePageManager;
 import net.lordimass.dialogue.util.TokenString;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
