@@ -29,13 +29,13 @@ import java.util.stream.Stream;
  * Handles the typewriter effect for any dialogues added to its <code>tickingPageManagers</code>
  * static list.
  */
-public class DialogueTickingSystem extends DelayedEntitySystem<EntityStore> {
+public class DialogueTypingSystem extends DelayedEntitySystem<EntityStore> {
     private static final float CHARS_PER_SECOND = 16.0F;
     private static final Set<Character> DELAY_CHARACTERS = Stream.of('.', ',', ';', '!', '?')
         .collect(Collectors.toUnmodifiableSet());
     public static ArrayList<DialoguePageManager> tickingPageManagers = new ArrayList<>();
 
-    public DialogueTickingSystem() {
+    public DialogueTypingSystem() {
         super(1.0F / CHARS_PER_SECOND);
     }
 

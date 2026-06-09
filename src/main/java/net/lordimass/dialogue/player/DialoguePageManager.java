@@ -12,7 +12,8 @@ import lombok.Getter;
 import net.lordimass.dialogue.codec.DialogueAsset;
 import net.lordimass.dialogue.codec.DialogueEntry;
 import net.lordimass.dialogue.component.NPCDialogueComponent;
-import net.lordimass.dialogue.system.DialogueTickingSystem;
+import net.lordimass.dialogue.system.DialogueAnimationSystem;
+import net.lordimass.dialogue.system.DialogueTypingSystem;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,7 +29,7 @@ public class DialoguePageManager {
     @Getter private final Ref<EntityStore> npcRef;
     @Getter private final PortraitElementManager portraitManager;
     @Getter private HyUIPage hyUIPage;
-    @Getter private DialogueTickingSystem.TypewriterEffectInfo typewriterEffectInfo;
+    @Getter private DialogueTypingSystem.TypewriterEffectInfo typewriterEffectInfo;
     @Getter private DialogueAsset dialogue;
 
     private PageBuilder builder;
@@ -51,7 +52,8 @@ public class DialoguePageManager {
             .loadHtml("Pages/Dialogue.html", new TemplateProcessor())
             .enableRuntimeTemplateUpdates(true)
             .onDismiss(this::closeCallback)
-            .withLifetime(CustomPageLifetime.CanDismiss);
+            .withLifetime(CustomPageLifetime.CanDismiss)
+            .enablePersistentElementEdits(true);
 
         portraitManager.updatePortraits(builder, this);
 
@@ -81,8 +83,8 @@ public class DialoguePageManager {
         String completeDialogueString = entries.toString();
         String inProgressString = completeDialogueString;
         if (dialogue.isTypewriterEffect()) {
-            DialogueTickingSystem.tickingPageManagers.add(this);
-            typewriterEffectInfo = new DialogueTickingSystem.TypewriterEffectInfo(completeDialogueString, this);
+            DialogueTypingSystem.tickingPageManagers.add(this);
+            typewriterEffectInfo = new DialogueTypingSystem.TypewriterEffectInfo(completeDialogueString, this);
             inProgressString = "";
         }
 
@@ -128,9 +130,9 @@ public class DialoguePageManager {
 
     private void closeCallback(HyUIPage hyUIPage, Boolean aBoolean) {
         NPCDialogueComponent.clear(npcRef);
-        int index = DialogueTickingSystem.tickingPageManagers.indexOf(this);
+        int index = DialogueTypingSystem.tickingPageManagers.indexOf(this);
         if (index >= 0) {
-            DialogueTickingSystem.tickingPageManagers.remove(index);
+            DialogueTypingSystem.tickingPageManagers.remove(index);
         }
     }
 

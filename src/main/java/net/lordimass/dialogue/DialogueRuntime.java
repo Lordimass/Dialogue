@@ -18,7 +18,8 @@ import net.lordimass.dialogue.player.DialoguePlayer;
 import net.lordimass.dialogue.player.DialoguePlayerConfig;
 import net.lordimass.dialogue.player.commands.DialogueCommand;
 import net.lordimass.dialogue.sensor.builder.BuilderSensorDialogue;
-import net.lordimass.dialogue.system.DialogueTickingSystem;
+import net.lordimass.dialogue.system.DialogueAnimationSystem;
+import net.lordimass.dialogue.system.DialogueTypingSystem;
 import net.lordimass.dialogue.system.VoiceHandler;
 
 import java.io.File;
@@ -62,7 +63,8 @@ public class DialogueRuntime {
     }
 
     public static void start(JavaPlugin host) {
-        host.getEntityStoreRegistry().registerSystem(new DialogueTickingSystem());
+        host.getEntityStoreRegistry().registerSystem(new DialogueTypingSystem());
+        host.getEntityStoreRegistry().registerSystem(new DialogueAnimationSystem());
         Creditor.start(host);
     }
 
