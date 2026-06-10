@@ -1,5 +1,6 @@
 {
+  "Character": "Player",
   "Name": "dialogue.username.name",
-  "Portrait": "Lordimass.png",
-  "InactivePortrait": "LordimassInactive.png"
+  "Portrait": "Player.png",
+  "InactivePortrait": "PlayerInactive.png"
 }

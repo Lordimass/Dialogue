@@ -15,6 +15,9 @@ import com.hypixel.hytale.codec.codecs.EnumCodec;
 import com.hypixel.hytale.codec.codecs.array.ArrayCodec;
 import com.hypixel.hytale.codec.schema.SchemaContext;
 import com.hypixel.hytale.codec.schema.config.Schema;
+import com.hypixel.hytale.codec.validation.Validator;
+import com.hypixel.hytale.codec.validation.validator.NonEmptyStringValidator;
+import com.hypixel.hytale.codec.validation.validator.NonNullValidator;
 import com.hypixel.hytale.logger.HytaleLogger;
 import lombok.Getter;
 import lombok.ToString;
@@ -52,6 +55,7 @@ public class DialogueAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
             )
             .documentation("The ID of the character asset to use for this Dialogue.")
             .addValidator(new AssetKeyValidator<>(CharacterAsset::getAssetStore))
+            .addValidator(NonEmptyStringValidator.INSTANCE)
             .add()
             .append(
                 new KeyedCodec<>("Character2", Codec.STRING),

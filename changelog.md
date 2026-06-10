@@ -1,15 +1,9 @@
-Moved parameter registration and processing to a new class `ParamaterRegister`. The existing parameter system has been
-renamed to "Replacement" parameters. 
-<br><br>
-Added _custom inline event tags_! These can be registered using a similar method to replacement parameters.
-Register an event tag using `ParameterRegister.registerEventTag`, providing the tag name, context type (ticking system 
-currently supplies: NPC ref `Ref.class`; `PlayerRef.class`, `DialogueMod.class`, `DialoguePageManager.class`). As well 
-as a list of parameter names for the tag, and a consuming `EventTagResolver` method which accepts an instance of the
-context type and a `Map<String,String>` from the parameter names to the extracted values.
+- Added Character assets to bundle together various commonly reused attributes across dialogue pages, such as the title
+  (now called `Name` in the character) and the voice. See docs for more details.
+- Added character portraits. These can be attached to characters to add some more life and character to your dialogues. 
+Suggestion from [@jwliocesa](https://x.com/jwliocesa/status/2062295463416443210?s=20) on Twitter, thank you!
+- Animated character portraits. Character portraits will bob up and down depending on whether they are the primary
+or secondary character in a scene, and can be configured to have a different `InactivePortrait` when they are secondary.
 
-Once the event tag is registered, it can be used with an HTML-like syntax in your `.lang` file. The sound event tags
-added in the previous patch have been migrated to use this new system, so there's a prime example in `DialogueRuntime`
-showing this in action.
-```java
-registerEventTag("sound", DialoguePageManager.class, VoiceHandler::playSoundEvent, new String[]{"is"});
-```
+A lot of the work in this update will likely be reduced to ash when Update 6 comes out as I have to migrate everything
+to Noesis. I'm looking forward to things with UI being easier, but I appreciate your support nonetheless. Thank you!

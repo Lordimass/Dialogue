@@ -1,7 +1,6 @@
 {
   "Type": "Choice",
   "Character": "Player",
-  "Character2": "Hans",
   "Entries": [
     {
       "Content": "dialogue.IntroDialogue03.content.0",
